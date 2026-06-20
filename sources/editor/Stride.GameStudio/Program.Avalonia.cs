@@ -34,6 +34,7 @@ using Stride.Core.Extensions;
 using Stride.Core.IO;
 using Stride.Core.MostRecentlyUsedFiles;
 using Stride.Core.Presentation.Services;
+using Stride.Core.Presentation.Avalonia.Services;
 using Stride.Core.Presentation.View;
 using Stride.Core.Presentation.ViewModels;
 using Stride.Core.Translation;
@@ -316,9 +317,10 @@ public static class Program
         private static IViewModelServiceProvider InitializeServiceProvider()
     {
         var dispatcherService = new AvaloniaDispatcherService(MainDispatcher);
-        var dialogService = new StrideDialogService(dispatcherService, StrideGameStudio.EditorName);
+        var dialogService = new AvaloniaDialogService();
+        var strideDialogService = new StrideDialogService(dispatcherService, StrideGameStudio.EditorName);
         var pluginService = new PluginService();
-        var services = new List<object> { dispatcherService, dialogService, pluginService };
+        var services = new List<object> { dispatcherService, dialogService, strideDialogService, pluginService };
         if (renderDocManager != null)
             services.Add(renderDocManager);
         var serviceProvider = new ViewModelServiceProvider(services);

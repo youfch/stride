@@ -13,21 +13,6 @@ using Avalonia.Platform;
 namespace Stride.Core.Presentation.Services;
 
 /// <summary>
-/// Result of a checked message box.
-/// </summary>
-public struct CheckedMessageBoxResult
-{
-    public MessageBoxResult Result { get; }
-    public bool IsChecked { get; }
-
-    public CheckedMessageBoxResult(MessageBoxResult result, bool isChecked)
-    {
-        Result = result;
-        IsChecked = isChecked;
-    }
-}
-
-/// <summary>
 /// Information about a dialog button.
 /// </summary>
 public class DialogButtonInfo
@@ -53,9 +38,8 @@ public class FileDialogFilter
 
 /// <summary>
 /// A lightweight dialog service interface for Avalonia.
-/// Note: Full IDialogService is defined in Stride.Core.Presentation assembly.
 /// </summary>
-public interface IDialogService2
+public interface IAvaloniaDialogService2
 {
     /// <summary>
     /// Shows a message box.
@@ -91,7 +75,7 @@ public interface IDialogService2
 /// <summary>
 /// Implementation of IDialogService2 using Avalonia dialogs.
 /// </summary>
-public class DialogService2 : IDialogService2
+public class DialogService2 : IAvaloniaDialogService2
 {
     private readonly Window? _ownerWindow;
 

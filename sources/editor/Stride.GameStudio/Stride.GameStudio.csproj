@@ -42,6 +42,9 @@
     <PackageReference Include="Avalonia.Themes.Fluent" Condition="'$(UIFramework)' == 'Avalonia'" />
     <PackageReference Include="Avalonia.Fonts.Inter" Condition="'$(UIFramework)' == 'Avalonia'" />
   </ItemGroup>
+  <ItemGroup Condition="'$(UIFramework)' == 'Avalonia'">
+    <ProjectReference Include="..\..\presentation\Stride.Core.Presentation.Avalonia\Stride.Core.Presentation.Avalonia.csproj" />
+  </ItemGroup>
   <PropertyGroup Condition="'$(UIFramework)' == 'Wpf'">
     <UseWPF>true</UseWPF>
     <EnableDefaultPageItems>false</EnableDefaultPageItems>

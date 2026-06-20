@@ -115,7 +115,11 @@ namespace Stride.GameStudio.ViewModels
         [NotNull]
         private Task CloseAndRestart()
         {
+#if WPF
             return ServiceProvider.Get<IDialogService2>().CloseMainWindow(RestartOnClosed);
+#else
+            return Task.CompletedTask;
+#endif
         }
 
         private void OpenAboutPage()
