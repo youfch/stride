@@ -15,9 +15,10 @@
     <StrideLocalized>true</StrideLocalized>
     <StrideNuGetResolverUI>true</StrideNuGetResolverUI>
     <StrideSTAThreadOnMain>true</StrideSTAThreadOnMain>
-    <UseWPF>true</UseWPF>
-    <EnableDefaultPageItems>false</EnableDefaultPageItems>
-    <EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
+    <!-- UI Framework: Wpf or Avalonia -->
+    <UIFramework Condition="'$(UIFramework)' == ''">Wpf</UIFramework>
+    <DefineConstants Condition="'$(UIFramework)' == 'Avalonia'">$(DefineConstants);AVALONIA</DefineConstants>
+    <DefineConstants Condition="'$(UIFramework)' == 'Wpf'">$(DefineConstants);WPF</DefineConstants>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Stride.GameStudio.Program</StartupObject>
@@ -35,14 +36,29 @@
     <PackageReference Include="Stride.Metrics" />
     <PackageReference Include="Mono.Cecil" />
     <PackageReference Include="SSH.NET" />
+    <!-- Avalonia packages for Avalonia UI framework -->
+    <PackageReference Include="Avalonia" Condition="'$(UIFramework)' == 'Avalonia'" Version="12.0.3" />
+    <PackageReference Include="Avalonia.Desktop" Condition="'$(UIFramework)' == 'Avalonia'" Version="12.0.3" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Condition="'$(UIFramework)' == 'Avalonia'" Version="12.0.3" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Condition="'$(UIFramework)' == 'Avalonia'" Version="12.0.3" />
+    <PackageReference Include="Avalonia.ReactiveUI" Condition="'$(UIFramework)' == 'Avalonia'" Version="12.0.3" />
+  </ItemGroup>
+  <PropertyGroup Condition="'$(UIFramework)' == 'Wpf'">
+    <UseWPF>true</UseWPF>
+    <EnableDefaultPageItems>false</EnableDefaultPageItems>
+    <EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
+  </PropertyGroup>
+  <ItemGroup>
     <Reference Include="Stride.Core.AssemblyProcessor">
       <HintPath Condition="$(TargetFramework.StartsWith('net10'))">..\..\..\deps\AssemblyProcessor\netstandard2.0\Stride.Core.AssemblyProcessor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" Exclude="App.xaml" />
-    <Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />
-    <ApplicationDefinition Include="App.xaml">
+    <Page Include="**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" Exclude="App.xaml" Condition="'$(UIFramework)' == 'Wpf'" />
+    <Page Include="**\*.axaml" SubType="Designer" Generator="Avalonia.Markup.Xaml.TemplatedCompiler.Compile" Condition="'$(UIFramework)' == 'Avalonia'" />
+    <Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" Condition="'$(UIFramework)' == 'Wpf'" />
+    <Compile Update="**\*.axaml.cs" SubType="Code" DependentUpon="%(Filename)" Condition="'$(UIFramework)' == 'Avalonia'" />
+    <ApplicationDefinition Include="App.xaml" Condition="'$(UIFramework)' == 'Wpf'">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>

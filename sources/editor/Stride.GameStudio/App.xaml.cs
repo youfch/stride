@@ -2,7 +2,13 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
+#if AVALONIA
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Markup.Xaml;
+#else
 using System.Windows;
+#endif
 using Stride.GameStudio.Helpers;
 
 namespace Stride.GameStudio
@@ -12,6 +18,7 @@ namespace Stride.GameStudio
     /// </summary>
     public partial class App
     {
+#if !AVALONIA
         private DataBindingExceptionRethrower exceptionRethrower;
 
         protected override void OnStartup(StartupEventArgs e)
@@ -25,5 +32,6 @@ namespace Stride.GameStudio
             base.OnExit(e);
             exceptionRethrower?.Dispose();
         }
+#endif
     }
 }
