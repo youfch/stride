@@ -8,28 +8,21 @@
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization --parameter-key</StrideAssemblyProcessorOptions>
-    <!-- UI Framework: Wpf or Avalonia -->
-    <UIFramework Condition="'$(UIFramework)' == ''">Wpf</UIFramework>
-    <DefineConstants Condition="'$(UIFramework)' == 'Avalonia'">$(DefineConstants);AVALONIA</DefineConstants>
-    <DefineConstants Condition="'$(UIFramework)' == 'Wpf'">$(DefineConstants);WPF</DefineConstants>
-    <UseWPF Condition="'$(UIFramework)' == 'Wpf'">true</UseWPF>
-    <EnableDefaultPageItems Condition="'$(UIFramework)' == 'Wpf'">false</EnableDefaultPageItems>
+    <UseWPF>true</UseWPF>
+    <EnableDefaultPageItems>false</EnableDefaultPageItems>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.StringTools" ExcludeAssets="runtime" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="runtime" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Build" ExcludeAssets="runtime" PrivateAssets="all" />
-    <PackageReference Include="AvalonEdit" Condition="'$(UIFramework)' == 'Wpf'" />
+    <PackageReference Include="AvalonEdit" />
     <PackageReference Include="System.Reactive.Linq" />
     <PackageReference Include="System.Reactive" />
-    <!-- WPF-specific CodeAnalysis packages (conflicts with RoslynPad.Avalonia 5.x) -->
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Condition="'$(UIFramework)' == 'Wpf'" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Condition="'$(UIFramework)' == 'Wpf'" />
-    <!-- WPF RoslynPad packages -->
-    <PackageReference Include="RoslynPad.Editor.Windows" Condition="'$(UIFramework)' == 'Wpf'" />
-    <PackageReference Include="RoslynPad.Roslyn.Windows" Condition="'$(UIFramework)' == 'Wpf'" />
-    <!-- RoslynPad.Roslyn - version depends on UI framework -->
-    <PackageReference Include="RoslynPad.Roslyn" Condition="'$(UIFramework)' == 'Wpf'" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" />
+    <PackageReference Include="RoslynPad.Editor.Windows" />
+    <PackageReference Include="RoslynPad.Roslyn.Windows" />
+    <PackageReference Include="RoslynPad.Roslyn" />
     <PackageReference Include="DotRecast.Detour" />
   </ItemGroup>
   <ItemGroup>
@@ -38,12 +31,8 @@
     </Compile>
     <None Include="app.config" />
     <None Include="*.cd" />
-    <!-- WPF pages conditionally included -->
-    <Page Include="**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" Condition="'$(UIFramework)' == 'Wpf'" />
-    <Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" Condition="'$(UIFramework)' == 'Wpf'" />
-    <!-- Avalonia pages -->
-    <Page Include="**\*.axaml" SubType="Designer" Generator="MSBuild:Compile" Condition="'$(UIFramework)' == 'Avalonia'" />
-    <Compile Update="**\*.axaml.cs" SubType="Code" DependentUpon="%(Filename)" Condition="'$(UIFramework)' == 'Avalonia'" />
+    <Page Include="**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" />
+    <Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />
     <EmbeddedResource Update="AssetEditors\Gizmos\GizmoResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>

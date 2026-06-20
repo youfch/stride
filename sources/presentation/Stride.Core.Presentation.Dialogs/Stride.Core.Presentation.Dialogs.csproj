@@ -4,23 +4,19 @@
     <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer</StrideAssemblyProcessorOptions>
-    <UIFramework Condition="'$(UIFramework)' == ''">Wpf</UIFramework>
-    <UseWPF Condition="'$(UIFramework)' == 'Wpf'">true</UseWPF>
-    <EnableDefaultPageItems Condition="'$(UIFramework)' == 'Wpf'">false</EnableDefaultPageItems>
+    <UseWPF>true</UseWPF>
+    <EnableDefaultPageItems>false</EnableDefaultPageItems>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Condition="'$(UIFramework)' == 'Wpf'" />
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>
-  <ItemGroup Condition="'$(UIFramework)' == 'Wpf'">
+  <ItemGroup>
     <ProjectReference Include="..\Stride.Core.Presentation.Wpf\Stride.Core.Presentation.Wpf.csproj" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UIFramework)' == 'Avalonia'">
-    <ProjectReference Include="..\Stride.Core.Presentation.Avalonia\Stride.Core.Presentation.Avalonia.csproj" />
   </ItemGroup>
   <Import Project="$(StrideRoot)sources/sdk/Stride.Build.Sdk.Editor/Sdk/Sdk.targets" />
 </Project>

@@ -1,7 +1,9 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
+#if WPF
 using System.Windows;
+#endif
 using Microsoft.Win32;
 
 namespace Stride.PrivacyPolicy
@@ -40,6 +42,7 @@ namespace Stride.PrivacyPolicy
         /// </summary>
         internal static void EnsurePrivacyPolicyStride40()
         {
+#if WPF
             if (RestartApplication == null)
                 throw new InvalidOperationException("The RestartApplication property must be set before calling this method.");
 
@@ -55,6 +58,7 @@ namespace Stride.PrivacyPolicy
                 // We restart the application after Privacy Policy acceptance.
                 RestartApplication();
             }
+#endif
         }
 
         /// <summary>

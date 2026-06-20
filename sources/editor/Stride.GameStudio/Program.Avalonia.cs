@@ -4,8 +4,15 @@
 #if AVALONIA
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Security;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -145,29 +152,15 @@ public static class Program
                 MainDispatcher.InvokeAsync(() => Startup(initialSessionPath));
 
                 // Build Avalonia app
-                var builder = new AppBuilder();
-                builder.Configure<App>();
-                builder.UseReactiveUI();
-                builder.SetupWithoutStarting();
+                var builder = AppBuilder.Configure<App>();
 
                 app = (App)builder.Instance;
-                app.Activated += (sender, eventArgs) =>
-                {
-                    StrideGameStudio.MetricsClient?.SetActiveState(true);
-                };
-                app.Deactivated += (sender, eventArgs) =>
-                {
-                    StrideGameStudio.MetricsClient?.SetActiveState(false);
-                };
+                StrideGameStudio.MetricsClient?.SetActiveState(true);
 
                 DiagLog("Avalonia app configured");
 
-                // Start the application
-                if (app.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-                {
-                    desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-                    desktop.Start();
-                }
+                // Start the application main loop
+                builder.StartWithClassicDesktopLifetime(args.ToArray());
             }
             catch (Exception e)
             {
@@ -241,7 +234,8 @@ public static class Program
                               $"Also make sure you have the latest [.NET {PackageSessionPublicHelper.NetMajorVersion} SDK](https://dotnet.microsoft.com/) \r\n\r\n" +
                               e;
                 await serviceProvider.Get<IDialogService>().MessageBoxAsync(message, Core.Presentation.Services.MessageBoxButton.OK, Core.Presentation.Services.MessageBoxImage.Error);
-                app?.Shutdown();
+                if (app?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                    desktop.Shutdown();
                 return;
             }
 
@@ -289,7 +283,7 @@ public static class Program
             else
             {
                 // User cancelled, exit
-                app?.Shutdown();
+                ShutdownApp();
                 return;
             }
 
@@ -304,18 +298,24 @@ public static class Program
             }
             else
             {
-                app?.Shutdown();
+                ShutdownApp();
             }
         }
         catch (Exception)
         {
-            app?.Shutdown();
+            ShutdownApp();
         }
     }
 
-    private static IViewModelServiceProvider InitializeServiceProvider()
+    static void ShutdownApp()
+        {
+            if (app?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                desktop.Shutdown();
+        }
+
+        private static IViewModelServiceProvider InitializeServiceProvider()
     {
-        var dispatcherService = new DispatcherService(MainDispatcher);
+        var dispatcherService = new AvaloniaDispatcherService(MainDispatcher);
         var dialogService = new StrideDialogService(dispatcherService, StrideGameStudio.EditorName);
         var pluginService = new PluginService();
         var services = new List<object> { dispatcherService, dialogService, pluginService };
@@ -323,6 +323,87 @@ public static class Program
             services.Add(renderDocManager);
         var serviceProvider = new ViewModelServiceProvider(services);
         return serviceProvider;
+    }
+
+    /// <summary>
+    /// Avalonia-compatible dispatcher service wrapping <see cref="Avalonia.Threading.Dispatcher"/>.
+    /// </summary>
+    private class AvaloniaDispatcherService : IDispatcherService
+    {
+        private readonly Dispatcher _dispatcher;
+
+        public AvaloniaDispatcherService(Dispatcher dispatcher)
+        {
+            _dispatcher = dispatcher;
+        }
+
+        public void Invoke(Action callback) => _dispatcher.Invoke(callback);
+
+        public TResult Invoke<TResult>(Func<TResult> callback) => _dispatcher.Invoke(callback);
+
+        public Task InvokeAsync(Action callback, CancellationToken token = default)
+        {
+            var tcs = new TaskCompletionSource();
+            _dispatcher.Post(() =>
+            {
+                callback();
+                tcs.SetResult();
+            });
+            return tcs.Task;
+        }
+
+        public Task LowPriorityInvokeAsync(Action callback, CancellationToken token = default)
+        {
+            var tcs = new TaskCompletionSource();
+            _dispatcher.Post(() =>
+            {
+                callback();
+                tcs.SetResult();
+            }, DispatcherPriority.Background);
+            return tcs.Task;
+        }
+
+        public Task<TResult> InvokeAsync<TResult>(Func<TResult> callback, CancellationToken token = default)
+        {
+            var tcs = new TaskCompletionSource<TResult>();
+            _dispatcher.Post(() =>
+            {
+                tcs.SetResult(callback());
+            });
+            return tcs.Task;
+        }
+
+        public Task InvokeTask(Func<Task> task, CancellationToken token = default)
+        {
+            var tcs = new TaskCompletionSource();
+            _dispatcher.Post(async () =>
+            {
+                await task();
+                tcs.SetResult();
+            });
+            return tcs.Task;
+        }
+
+        public Task<TResult> InvokeTask<TResult>(Func<Task<TResult>> task, CancellationToken token = default)
+        {
+            var tcs = new TaskCompletionSource<TResult>();
+            _dispatcher.Post(async () =>
+            {
+                var result = await task();
+                tcs.SetResult(result);
+            });
+            return tcs.Task;
+        }
+
+        public bool CheckAccess() => _dispatcher.CheckAccess();
+
+        public void EnsureAccess(bool inDispatcherThread = true)
+        {
+            if (inDispatcherThread && !CheckAccess())
+                throw new InvalidOperationException("Access to the dispatcher thread is required.");
+            if (!inDispatcherThread && CheckAccess())
+                throw new InvalidOperationException("Access to a non-dispatcher thread is required.");
+        }
     }
 
     private static void InitializeLanguageSettings()

@@ -15,9 +15,10 @@ using Stride.Assets;
 using Stride.Core.Presentation.Services;
 using Stride.Editor.CrashReport;
 using Stride.Graphics;
-using DialogResult = System.Windows.Forms.DialogResult;
-using Stride.GameStudio.AssetsEditors;
 using Stride.Core.Assets.Editor.Services;
+#if WPF
+using Stride.GameStudio.AssetsEditors;
+#endif
 
 namespace Stride.GameStudio.Helpers
 {
@@ -56,15 +57,18 @@ namespace Stride.GameStudio.Helpers
             // opened assets
             try
             {
-                if (SessionViewModel.Instance?.ServiceProvider.TryGet<IAssetEditorsManager>() is AssetEditorsManager manager)
+#if WPF
+                var manager = SessionViewModel.Instance?.ServiceProvider.TryGet<IAssetEditorsManager>();
+                if (manager is AssetEditorsManager assetManager)
                 {
                     var sb = new StringBuilder();
-                    foreach (var asset in manager.GetCurrentlyOpenedAssets())
+                    foreach (var asset in assetManager.GetCurrentlyOpenedAssets())
                     {
                         sb.AppendLine($"{asset.Id}:{asset.Name} ({asset.TypeDisplayName})");
                     }
                     crashReport["OpenedAssets"] = sb.ToString();
                 }
+#endif
             }
             catch (Exception e)
             {

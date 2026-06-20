@@ -5,12 +5,8 @@
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
     <StrideLocalized>true</StrideLocalized>
-    <!-- UI Framework: Wpf or Avalonia -->
-    <UIFramework Condition="'$(UIFramework)' == ''">Wpf</UIFramework>
-    <DefineConstants Condition="'$(UIFramework)' == 'Avalonia'">$(DefineConstants);AVALONIA</DefineConstants>
-    <DefineConstants Condition="'$(UIFramework)' == 'Wpf'">$(DefineConstants);WPF</DefineConstants>
-    <UseWPF Condition="'$(UIFramework)' == 'Wpf'">true</UseWPF>
-    <EnableDefaultPageItems Condition="'$(UIFramework)' == 'Wpf'">false</EnableDefaultPageItems>
+    <UseWPF>true</UseWPF>
+    <EnableDefaultPageItems>false</EnableDefaultPageItems>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,16 +15,10 @@
     </Compile>
   </ItemGroup>
 
-  <!-- WPF-specific items -->
-  <ItemGroup Condition="'$(UIFramework)' == 'Wpf' Or '$(UIFramework)' == ''">
+  <ItemGroup>
     <Page Include="**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" />
     <Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
-  </ItemGroup>
-
-  <!-- Avalonia-specific items (for dual-build compatibility) -->
-  <ItemGroup Condition="'$(UIFramework)' == 'Avalonia'">
-    <!-- Avalonia projects use separate .csproj, this is a placeholder -->
   </ItemGroup>
 
   <ItemGroup>

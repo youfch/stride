@@ -55,7 +55,14 @@
   <ItemGroup>
     <Page Include="**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" Exclude="App.xaml" Condition="'$(UIFramework)' == 'Wpf'" />
     <!-- .xaml.cs files compiled only in WPF mode (they contain WPF-specific code) -->
+    <Compile Remove="**\*.xaml.cs" Condition="'$(UIFramework)' == 'Avalonia'" />
     <Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" Condition="'$(UIFramework)' == 'Wpf'" />
+    <!-- AvalonDock-dependent files (not compiled in Avalonia mode) -->
+    <Compile Remove="Layout\**\*.cs" Condition="'$(UIFramework)' == 'Avalonia'" />
+    <Compile Remove="View\CustomDocumentPaneTabPanel.cs" Condition="'$(UIFramework)' == 'Avalonia'" />
+    <Compile Remove="AssetsEditors\AssetEditorsManager.cs" Condition="'$(UIFramework)' == 'Avalonia'" />
+    <!-- PrivacyPolicy WPF files (excluded in Avalonia mode, need guard in PrivacyPolicyHelper.cs) -->
+    <Compile Remove="..\Stride.PrivacyPolicy\PrivacyPolicyWindow.xaml.cs" Condition="'$(UIFramework)' == 'Avalonia'" />
     <!-- Avalonia .axaml pages and their code-behind -->
     <Page Include="**\*.axaml" SubType="Designer" Generator="MSBuild:Compile" Condition="'$(UIFramework)' == 'Avalonia'" />
     <Compile Update="**\*.axaml.cs" SubType="Code" DependentUpon="%(Filename)" Condition="'$(UIFramework)' == 'Avalonia'" />

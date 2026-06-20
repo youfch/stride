@@ -1,3 +1,6 @@
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -8,45 +11,6 @@ using Avalonia.Media;
 using Avalonia.Platform;
 
 namespace Stride.Core.Presentation.Services;
-
-/// <summary>
-/// Result of a dialog operation.
-/// </summary>
-public enum DialogResult
-{
-    None,
-    OK,
-    Cancel,
-    Yes,
-    No,
-    Abort,
-    Retry,
-    Ignore
-}
-
-/// <summary>
-/// Button configuration for a message box.
-/// </summary>
-public enum MessageBoxButton
-{
-    OK,
-    OKCancel,
-    YesNo,
-    YesNoCancel,
-    RetryCancel
-}
-
-/// <summary>
-/// Image icon for a message box.
-/// </summary>
-public enum MessageBoxImage
-{
-    None,
-    Information,
-    Warning,
-    Error,
-    Question
-}
 
 /// <summary>
 /// Result of a checked message box.
@@ -61,21 +25,6 @@ public struct CheckedMessageBoxResult
         Result = result;
         IsChecked = isChecked;
     }
-}
-
-/// <summary>
-/// Result of a message box.
-/// </summary>
-public enum MessageBoxResult
-{
-    None,
-    OK,
-    Cancel,
-    Yes,
-    No,
-    Abort,
-    Retry,
-    Ignore
 }
 
 /// <summary>
@@ -94,7 +43,17 @@ public class DialogButtonInfo
 }
 
 /// <summary>
-/// Service for showing dialogs.
+/// File dialog filter.
+/// </summary>
+public class FileDialogFilter
+{
+    public string Name { get; set; } = string.Empty;
+    public string Pattern { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// A lightweight dialog service interface for Avalonia.
+/// Note: Full IDialogService is defined in Stride.Core.Presentation assembly.
 /// </summary>
 public interface IDialogService2
 {
@@ -127,15 +86,6 @@ public interface IDialogService2
     /// Shows a folder open dialog.
     /// </summary>
     Task<string?> ShowFolderOpenDialog(string title, string initialDirectory);
-}
-
-/// <summary>
-/// File dialog filter.
-/// </summary>
-public class FileDialogFilter
-{
-    public string Name { get; set; } = string.Empty;
-    public string Pattern { get; set; } = string.Empty;
 }
 
 /// <summary>
@@ -178,7 +128,6 @@ public class DialogService2 : IDialogService2
 
     public async Task<int> ShowMessageBox(string message, IEnumerable<DialogButtonInfo> buttons, MessageBoxImage image = MessageBoxImage.None)
     {
-        // Simplified - just show OK
         var result = await ShowMessageBox(message, MessageBoxButton.OK, image);
         return result == MessageBoxResult.OK ? 0 : -1;
     }
@@ -193,8 +142,6 @@ public class DialogService2 : IDialogService2
     {
         var topLevel = GetTopLevel();
         if (topLevel == null) return null;
-
-        // Simplified - just return null for now
         return null;
     }
 
@@ -202,8 +149,6 @@ public class DialogService2 : IDialogService2
     {
         var topLevel = GetTopLevel();
         if (topLevel == null) return null;
-
-        // Simplified - just return null for now
         return null;
     }
 
@@ -211,8 +156,6 @@ public class DialogService2 : IDialogService2
     {
         var topLevel = GetTopLevel();
         if (topLevel == null) return null;
-
-        // Simplified - just return null for now
         return null;
     }
 

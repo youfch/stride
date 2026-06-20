@@ -8,11 +8,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         x:Class="Stride.GameStudio.View.GameStudioWindow"
+        x:CompileBindings="False"
         Title="{Binding EditorTitle, RelativeSource={RelativeSource Self}}"
         Width="1280" Height="900"
         d:DataContext="{d:DesignInstance vm:GameStudioViewModel}"
-        x:Name="EditorWindow"
-        PreviewMouseDown="EditorWindowPreviewMouseDown">
+        x:Name="EditorWindow">
   <Grid RowDefinitions="Auto,*,Auto">
     <!-- MENU -->
     <Menu Grid.Row="0">
