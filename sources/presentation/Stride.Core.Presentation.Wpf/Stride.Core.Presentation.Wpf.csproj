@@ -5,8 +5,12 @@
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
     <StrideLocalized>true</StrideLocalized>
-    <UseWPF>true</UseWPF>
-    <EnableDefaultPageItems>false</EnableDefaultPageItems>
+    <!-- UI Framework: Wpf or Avalonia -->
+    <UIFramework Condition="'$(UIFramework)' == ''">Wpf</UIFramework>
+    <DefineConstants Condition="'$(UIFramework)' == 'Avalonia'">$(DefineConstants);AVALONIA</DefineConstants>
+    <DefineConstants Condition="'$(UIFramework)' == 'Wpf'">$(DefineConstants);WPF</DefineConstants>
+    <UseWPF Condition="'$(UIFramework)' == 'Wpf'">true</UseWPF>
+    <EnableDefaultPageItems Condition="'$(UIFramework)' == 'Wpf'">false</EnableDefaultPageItems>
   </PropertyGroup>
 
   <ItemGroup>
