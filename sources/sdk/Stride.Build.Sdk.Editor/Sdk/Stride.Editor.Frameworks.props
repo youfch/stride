@@ -1,20 +1,35 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!--
+    ================================================================
     Editor-specific framework definitions.
+    ================================================================
 
     These properties are only available to projects using Stride.Sdk.Editor
     (or SDKs that compose it, like Stride.Sdk.Tests).
 
-    - StrideEditorTargetFramework: Windows-only editor projects (WPF/GameStudio)
+    - StrideEditorTargetFramework: Windows UI framework (WPF or Avalonia)
     - StrideXplatEditorTargetFramework: Cross-platform editor/tool projects
+    - UIFramework: UI framework selection (Wpf/Avalonia, default: Wpf)
 
-    Future: When migrating from WPF to Avalonia, this is the single location
-    to update framework targeting for all editor projects.
+    Dual-build mode: Set $(UIFramework)='Avalonia' to build Avalonia UI,
+    or $(UIFramework)='Wpf' (default) to build WPF UI.
   -->
+
+  <!-- Default UI framework to Wpf for backward compatibility -->
+  <PropertyGroup Condition="'$(UIFramework)' == ''">
+    <UIFramework>Wpf</UIFramework>
+  </PropertyGroup>
+
+  <!-- UI framework constants -->
   <PropertyGroup>
     <StrideEditorTargetFramework>$(StrideFrameworkWindows)</StrideEditorTargetFramework>
     <StrideXplatEditorTargetFramework>$(StrideFramework)</StrideXplatEditorTargetFramework>
+  </PropertyGroup>
+
+  <!-- Avalonia version for dual-build (12.0.3+ required by RoslynPad.Editor.Avalonia 5.0.0) -->
+  <PropertyGroup>
+    <AvaloniaVersion>12.0.3</AvaloniaVersion>
   </PropertyGroup>
 
 </Project>

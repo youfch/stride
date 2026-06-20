@@ -1,0 +1,52 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--
+    ================================================================
+    Stride.Editor.Frameworks - UI Framework Selection
+    ================================================================
+
+    This file adds conditional logic for WPF vs Avalonia UI framework
+    selection. Projects can set $(UIFramework) to 'Wpf' or 'Avalonia'
+    to control which UI stack they use.
+
+    Default: Wpf (backward compatible)
+
+    Usage:
+      <PropertyGroup>
+        <UIFramework>Avalonia</UIFramework>
+      </PropertyGroup>
+
+    Framework constants:
+      - StrideEditorTargetFramework: Windows UI framework (WPF or Avalonia)
+      - StrideXplatEditorTargetFramework: Cross-platform editor framework
+      - StrideUIFramework: Current UI framework name (Wpf/Avalonia)
+
+    Conditions:
+      - '$(UIFramework)' == 'Wpf' → WPF-specific references
+      - '$(UIFramework)' == 'Avalonia' → Avalonia-specific references
+      - '$(UIFramework)' == '' → defaults to Wpf
+  -->
+
+  <!-- Default UI framework to Wpf for backward compatibility -->
+  <PropertyGroup Condition="'$(UIFramework)' == ''">
+    <UIFramework>Wpf</UIFramework>
+  </PropertyGroup>
+
+  <!-- UI framework display name for logging/debugging -->
+  <PropertyGroup>
+    <StrideUIFramework>$(UIFramework)</StrideUIFramework>
+  </PropertyGroup>
+
+  <!-- Framework selection based on UIFramework property -->
+  <PropertyGroup Condition="'$(UIFramework)' == 'Wpf'">
+    <UseWPF>true</UseWPF>
+    <StrideEditorTargetFramework>$(StrideFrameworkWindows)</StrideEditorTargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(UIFramework)' == 'Avalonia'">
+    <UseWPF>false</UseWPF>
+    <StrideEditorTargetFramework>$(StrideFramework)</StrideEditorTargetFramework>
+    <AvaloniaVersion>12.0.0</AvaloniaVersion>
+  </PropertyGroup>
+
+</Project>

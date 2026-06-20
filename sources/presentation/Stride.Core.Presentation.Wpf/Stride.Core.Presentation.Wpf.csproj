@@ -15,10 +15,16 @@
     </Compile>
   </ItemGroup>
 
-  <ItemGroup>
+  <!-- WPF-specific items -->
+  <ItemGroup Condition="'$(UIFramework)' == 'Wpf' Or '$(UIFramework)' == ''">
     <Page Include="**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
     <Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
+  </ItemGroup>
+
+  <!-- Avalonia-specific items (for dual-build compatibility) -->
+  <ItemGroup Condition="'$(UIFramework)' == 'Avalonia'">
+    <!-- Avalonia projects use separate .csproj, this is a placeholder -->
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,30 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <AvaloniaVersion>12.0.3</AvaloniaVersion>
+    <DockAvaloniaVersion>12.0.0</DockAvaloniaVersion>
+    <RoslynPadVersion>5.0.0</RoslynPadVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Avalonia -->
+    <PackageVersion Include="Avalonia" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Controls.DataGrid" Version="12.0.0" />
+    
+    <!-- Dock for Avalonia -->
+    <PackageVersion Include="Dock.Avalonia" Version="$(DockAvaloniaVersion)" />
+    <PackageVersion Include="Dock.Model.Avalonia" Version="$(DockAvaloniaVersion)" />
+    <PackageVersion Include="Dock.Avalonia.Themes.Fluent" Version="$(DockAvaloniaVersion)" />
+    
+    <!-- RoslynPad.Avalonia -->
+    <PackageVersion Include="RoslynPad.Editor.Avalonia" Version="$(RoslynPadVersion)" />
+    <PackageVersion Include="RoslynPad.Roslyn.Avalonia" Version="$(RoslynPadVersion)" />
+    <PackageVersion Include="RoslynPad.Themes" Version="$(RoslynPadVersion)" />
+    
+    <!-- SDK required packages -->
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+  </ItemGroup>
+</Project>
