@@ -13,7 +13,7 @@
         Width="1280" Height="900"
         d:DataContext="{d:DesignInstance vm:GameStudioViewModel}"
         x:Name="EditorWindow">
-  <Grid RowDefinitions="Auto,*,Auto">
+  <Grid RowDefinitions="Auto,Auto,*,Auto">
     <!-- MENU -->
     <Menu Grid.Row="0">
       <MenuItem Header="_File">
@@ -38,18 +38,26 @@
       </MenuItem>
     </Menu>
 
+    <!-- TOOLBAR -->
+    <WrapPanel Grid.Row="1" Margin="4,2">
+      <Button Command="{Binding NewSessionCommand}" ToolTip.Tip="New Project" Margin="2,0">New</Button>
+      <Button Command="{Binding OpenSessionCommand}" ToolTip.Tip="Open" Margin="2,0">Open</Button>
+      <Button Command="{Binding Session.SaveSessionCommand}" ToolTip.Tip="Save" Margin="2,0">Save</Button>
+      <Separator Width="1" Height="20" Margin="4,0" />
+      <Button Command="{Binding Debugging.BuildProjectCommand}" ToolTip.Tip="Build" Margin="2,0">Build</Button>
+      <Button Command="{Binding Debugging.StartProjectCommand}" ToolTip.Tip="Run" Margin="2,0">Run</Button>
+    </WrapPanel>
+
     <!-- CONTENT AREA -->
-    <Grid Grid.Row="1">
-      <Panel Name="DockPanelHost">
-        <TextBlock Text="Docking area - AvaloniaDock placeholder"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center" />
-      </Panel>
+    <Grid Grid.Row="2">
+      <TextBlock Text="Avalonia 12 Editor"
+                 HorizontalAlignment="Center" VerticalAlignment="Center"
+                 FontSize="18" Opacity="0.5" />
     </Grid>
 
     <!-- STATUS BAR -->
-    <Border Grid.Row="2" Background="{DynamicResource ThemeControlLowColor}" Padding="8,4">
-      <TextBlock Text="{Binding Status.StatusText, FallbackValue=Ready}" FontSize="11" />
+    <Border Grid.Row="3" Background="{DynamicResource StrideStatusBarBrush}" Padding="8,4">
+      <TextBlock Text="{Binding Status.StatusText, FallbackValue=Ready}" FontSize="11" Foreground="White" />
     </Border>
   </Grid>
 </Window>

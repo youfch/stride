@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Avalonia 12 styles for Stride Game Studio -->
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- Window Style -->
+  <Style Selector="Window">
+    <Setter Property="Background" Value="{DynamicResource StrideDarkBackgroundBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource StrideForegroundBrush}" />
+    <Setter Property="FontSize" Value="12" />
+  </Style>
+
+  <!-- Menu Styles -->
+  <Style Selector="Menu">
+    <Setter Property="Background" Value="{DynamicResource StrideDarkBackgroundBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource StrideForegroundBrush}" />
+    <Setter Property="FontSize" Value="12" />
+  </Style>
+
+  <Style Selector="MenuItem">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource StrideForegroundBrush}" />
+  </Style>
+
+  <Style Selector="MenuItem:pointerover /template/ Border#border">
+    <Setter Property="Background" Value="{DynamicResource StrideHighlightBrush}" />
+  </Style>
+
+  <Style Selector="Separator">
+    <Setter Property="Background" Value="{DynamicResource StrideBorderBrush}" />
+  </Style>
+
+  <!-- Button Styles -->
+  <Style Selector="Button">
+    <Setter Property="Background" Value="{DynamicResource StrideMediumBackgroundBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource StrideForegroundBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource StrideBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Padding" Value="8,4" />
+  </Style>
+
+  <Style Selector="Button:pointerover /template/ Border#border">
+    <Setter Property="Background" Value="{DynamicResource StrideLightBackgroundBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource StrideHighlightBrush}" />
+  </Style>
+
+  <Style Selector="Button:pressed /template/ Border#border">
+    <Setter Property="Background" Value="{DynamicResource StrideHighlightBrush}" />
+  </Style>
+
+  <!-- TextBox Styles -->
+  <Style Selector="TextBox">
+    <Setter Property="Background" Value="{DynamicResource StrideDarkBackgroundBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource StrideForegroundBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource StrideBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Padding" Value="4,2" />
+  </Style>
+
+  <Style Selector="TextBox:focus /template/ Border#border">
+    <Setter Property="BorderBrush" Value="{DynamicResource StrideHighlightBrush}" />
+  </Style>
+
+  <!-- TreeView Styles -->
+  <Style Selector="TreeView">
+    <Setter Property="Background" Value="{DynamicResource StrideDarkBackgroundBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource StrideForegroundBrush}" />
+  </Style>
+
+  <Style Selector="TreeViewItem">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource StrideForegroundBrush}" />
+  </Style>
+
+  <Style Selector="TreeViewItem:selected /template/ Border#border">
+    <Setter Property="Background" Value="{DynamicResource StrideHighlightBrush}" />
+  </Style>
+
+  <!-- ListBox Styles -->
+  <Style Selector="ListBox">
+    <Setter Property="Background" Value="{DynamicResource StrideDarkBackgroundBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource StrideForegroundBrush}" />
+  </Style>
+
+  <Style Selector="ListBoxItem:selected /template/ Border#border">
+    <Setter Property="Background" Value="{DynamicResource StrideHighlightBrush}" />
+  </Style>
+
+  <!-- TabControl Styles -->
+  <Style Selector="TabControl">
+    <Setter Property="Background" Value="{DynamicResource StrideDarkBackgroundBrush}" />
+  </Style>
+
+  <Style Selector="TabItem">
+    <Setter Property="Background" Value="{DynamicResource StrideDarkBackgroundBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource StrideForegroundBrush}" />
+  </Style>
+
+</Styles>

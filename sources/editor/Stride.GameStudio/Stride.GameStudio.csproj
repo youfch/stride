@@ -65,7 +65,6 @@
     <Compile Remove="..\Stride.PrivacyPolicy\PrivacyPolicyWindow.xaml.cs" Condition="'$(UIFramework)' == 'Avalonia'" />
     <!-- Avalonia .axaml pages and their code-behind -->
     <Page Include="**\*.axaml" SubType="Designer" Generator="MSBuild:Compile" Condition="'$(UIFramework)' == 'Avalonia'" />
-    <Compile Update="**\*.axaml.cs" SubType="Code" DependentUpon="%(Filename)" Condition="'$(UIFramework)' == 'Avalonia'" />
     <ApplicationDefinition Include="App.xaml" Condition="'$(UIFramework)' == 'Wpf'">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

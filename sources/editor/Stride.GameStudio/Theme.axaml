@@ -1,0 +1,31 @@
+<!-- Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp) -->
+<!-- Distributed under the MIT license. See the LICENSE.md file in the project root for more information. -->
+<!-- Avalonia 12 theme resource dictionary for Stride Game Studio -->
+
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- === Colors === -->
+  <Color x:Key="StrideBackgroundColor">#FF2D2D30</Color>
+  <Color x:Key="StrideDarkBackgroundColor">#FF252526</Color>
+  <Color x:Key="StrideMediumBackgroundColor">#FF3F3F46</Color>
+  <Color x:Key="StrideLightBackgroundColor">#FF4E4E55</Color>
+  <Color x:Key="StrideHighlightColor">#FF007ACC</Color>
+  <Color x:Key="StrideHighlightAltColor">#FF1C97EA</Color>
+  <Color x:Key="StrideForegroundColor">#FFF0F0F0</Color>
+  <Color x:Key="StrideDisabledForegroundColor">#FF656565</Color>
+  <Color x:Key="StrideForegroundBrush">#FFF0F0F0</Color>
+  <Color x:Key="StrideBorderColor">#FF3F3F46</Color>
+  <Color x:Key="StrideStatusBarColor">#FF007ACC</Color>
+
+  <!-- === Brushes === -->
+  <SolidColorBrush x:Key="StrideBackgroundBrush" Color="{StaticResource StrideBackgroundColor}" />
+  <SolidColorBrush x:Key="StrideDarkBackgroundBrush" Color="{StaticResource StrideDarkBackgroundColor}" />
+  <SolidColorBrush x:Key="StrideMediumBackgroundBrush" Color="{StaticResource StrideMediumBackgroundColor}" />
+  <SolidColorBrush x:Key="StrideLightBackgroundBrush" Color="{StaticResource StrideLightBackgroundColor}" />
+  <SolidColorBrush x:Key="StrideHighlightBrush" Color="{StaticResource StrideHighlightColor}" />
+  <SolidColorBrush x:Key="StrideForegroundBrush" Color="{StaticResource StrideForegroundColor}" />
+  <SolidColorBrush x:Key="StrideDisabledForegroundBrush" Color="{StaticResource StrideDisabledForegroundColor}" />
+  <SolidColorBrush x:Key="StrideBorderBrush" Color="{StaticResource StrideBorderColor}" />
+  <SolidColorBrush x:Key="StrideStatusBarBrush" Color="{StaticResource StrideStatusBarColor}" />
+</ResourceDictionary>
