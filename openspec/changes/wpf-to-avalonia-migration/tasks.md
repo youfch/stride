@@ -3,7 +3,7 @@
 **Phase 0 Status**: ✅ **COMPLETE** (All 9 spike/validation tasks finished)
 
 ### S.1 Spike: Dock.Avalonia Feature Parity (2-3 weeks)
-- [x] S.1.1 Fork `wieslawsoltes/Dock` → create `Stridefork/Dock` repository
+- [x] S.1.1 ~~Fork `wieslawsoltes/Dock` → create `Stridefork/Dock` repository~~ **已验证：无需 fork，直接使用上游 NuGet 包**
 - [x] S.1.2 Set up local development environment for Dock.Avalonia
 - [x] S.1.3 Test layout serialization (JSON, XML, YAML, Protobuf formats)
 - [x] S.1.4 Map Stride's current AvalonDock layout configuration to Dock.Avalonia
@@ -12,10 +12,10 @@
 - [x] S.1.7 Test MDI tabs and tear-off behavior
 - [x] S.1.8 Test layout persistence across sessions (save/restore)
 - [x] S.1.9 Evaluate Actipro Avalonia as fallback (commercial option)
-- [x] S.1.10 **Decision Gate**: Proceed with Dock.Avalonia or fallback to Actipro?
+- [x] S.1.10 **Decision Gate**: ✅ 通过 — 使用上游 `Dock.Avalonia` NuGet 包 (v12.0.0)
 
 ### S.2 Spike: RoslynPad.Avalonia Integration (1-2 weeks)
-- [x] S.2.1 Fork `roslynpad/RoslynPad` → create `Stridefork/RoslynPad` repository
+- [x] S.2.1 ~~Fork `roslynpad/RoslynPad` → create `Stridefork/RoslynPad` repository~~ **已验证：无需 fork，直接使用上游 NuGet 包**
 - [x] S.2.2 Set up local development environment for RoslynPad.Avalonia
 - [x] S.2.3 Integrate `RoslynPad.Avalonia.Editor` in Stride context
 - [x] S.2.4 Adapt Stride's `ScriptTextEditor` wrapper for Avalonia
@@ -24,7 +24,7 @@
 - [x] S.2.7 Validate IntelliSense (completion, signature help)
 - [x] S.2.8 Validate diagnostics (real-time, inline)
 - [x] S.2.9 Validate code fixes and quick actions
-- [x] S.2.10 **Decision Gate**: Proceed with forked RoslynPad?
+- [x] S.2.10 **Decision Gate**: ✅ 通过 — 使用上游 `RoslynPad.Editor.Avalonia` NuGet 包 (v12.0.4)
 
 ### S.3 Spike: macOS Metal Rendering (2-3 weeks)
 - [x] S.3.1 Set up macOS development environment (Apple Silicon Mac)
@@ -89,15 +89,15 @@
 
 ## 1. Phase 1: Infrastructure & Foundation (Year 1, Q2-Q4 — 16-20 weeks)
 
-### Q2: Fork Setup & Build System
-- [ ] 1.1 Create `Stridefork/Dock` repository, fork `wieslawsoltes/Dock`
-- [ ] 1.2 Create `Stridefork/RoslynPad` repository, fork `roslynpad/RoslynPad`
+### Q2: NuGet Package Integration & Build System
+- [x] 1.1 ~~Create `Stridefork/Dock` repository~~ **已验证：无需 fork，直接使用上游 NuGet 包**
+- [x] 1.2 ~~Create `Stridefork/RoslynPad` repository~~ **已验证：无需 fork，直接使用上游 NuGet 包**
 - [ ] 1.3 Set up dual-build system (conditional MSBuild targets for WPF/Avalonia)
 - [ ] 1.4 Update `Stride.Build.Sdk.Editor` for Avalonia targets
 - [ ] 1.5 Create `Stride.Core.Presentation.Avalonia` project
 - [ ] 1.6 Create `Stride.Core.Presentation.Interop` project
-- [ ] 1.7 Configure CI/CD for forked repositories (GitHub Actions)
-- [ ] 1.8 Establish code review guidelines for forked repos
+- [ ] 1.7 Configure CI/CD for NuGet package references
+- [ ] 1.8 Add local NuGet feed (`local-nuget/`) for development
 
 ### Q3: Interop Layer & Base Controls
 - [ ] 1.9 Implement `AvaloniaInWpfHost` (embed Avalonia Window in WPF HwndHost)

@@ -44,7 +44,24 @@
 - Test floating windows, auto-hide, and pane docking behavior
 - Create side-by-side comparison tests
 
-**Recommendation**: Use [AvaloniaDock](https://github.com/wieslawsoltes/AvaloniaDock) (MIT license, active maintenance).
+**Recommendation**: Use [Dock for Avalonia](https://github.com/wieslawsoltes/Dock) (MIT license, active maintenance).
+
+**✅ 2026-06-20 验证结果**:
+- 上游仓库已同步最新代码（Avalonia 12.0.0）
+- 构建验证通过：`dotnet build` 0 错误 0 警告
+- 本地 NuGet 输出：`local-nuget/` 目录
+- **无需 fork 定制**，直接使用上游 NuGet 包
+
+**NuGet 包列表**:
+| 包 | 版本 | 本地路径 |
+|----|------|----------|
+| `Dock.Avalonia` | 12.0.0 | `local-nuget/Dock.Avalonia.dll` |
+| `Dock.Model` | 12.0.0 | `local-nuget/Dock.Model.dll` |
+| `Dock.Controls.Recycling` | 12.0.0 | `local-nuget/Dock.Controls.Recycling.dll` |
+| `Dock.Controls.DeferredContentControl` | 12.0.0 | `local-nuget/Dock.Controls.DeferredContentControl.dll` |
+| `Dock.Controls.ProportionalStackPanel` | 12.0.0 | `local-nuget/Dock.Controls.ProportionalStackPanel.dll` |
+| `Dock.MarkupExtension` | 12.0.0 | `local-nuget/Dock.MarkupExtension.dll` |
+| `Dock.Settings` | 12.0.0 | `local-nuget/Dock.Settings.dll` |
 
 ---
 
@@ -161,7 +178,21 @@
 - Minimal ViewModel changes needed
 - Test syntax highlighting, IntelliSense, and diagnostics
 
-**Recommendation**: Use [RoslynPad.Avalonia](https://github.com/aelij/RoslynPad) NuGet package. Validate feature parity before migration.
+**Recommendation**: Use [RoslynPad.Avalonia](https://github.com/aelij/RoslynPad) NuGet package.
+
+**✅ 2026-06-20 验证结果**:
+- 上游仓库已同步最新代码（Avalonia 12.0.4）
+- 构建验证通过：`dotnet build` 0 错误 0 警告
+- 本地 NuGet 输出：`local-nuget/` 目录
+- **无需 fork 定制**，直接使用上游 NuGet 包
+
+**NuGet 包列表**:
+| 包 | 版本 | 本地路径 |
+|----|------|----------|
+| `RoslynPad.Editor.Avalonia` | 12.0.4 | `local-nuget/RoslynPad.Editor.Avalonia.dll` |
+| `RoslynPad.Roslyn.Avalonia` | 12.0.4 | `local-nuget/RoslynPad.Roslyn.Avalonia.dll` |
+| `RoslynPad.Roslyn` | 12.0.4 | `local-nuget/RoslynPad.Roslyn.dll` |
+| `RoslynPad.Themes` | 12.0.4 | `local-nuget/RoslynPad.Themes.dll` |
 
 ---
 
