@@ -308,65 +308,308 @@ During Phase 1-2 (parallel WPF/Avalonia):
 └──────────────────────────────────────────────────────┘
 ```
 
-## Risks / Trade-offs
+## Third-Party Library Customization Strategy
 
-| Risk | Impact | Likelihood | Mitigation |
-|------|--------|-----------|------------|
-| **AvaloniaDock not feature-matching AvalonDock** | High — missing layout persistence or floating windows could block migration | Medium | Evaluate early (Phase 1 spike). Fallback: Custom layout wrapper or embed AvalonDock via interop as temporary measure |
-| **3D preview performance on Linux/macOS** | Medium — game rendering via Vulkan/Metal instead of DirectX | Medium | Use Stride's existing Vulkan backend for Linux, Metal for macOS. Validate in Phase 2 spike |
-| **PropertyGrid behavior differences** | Medium — subtle UX differences in inline editing, validation, keyboard navigation | Low-medium | Comprehensive test harness comparing WPF vs Avalonia PropertyGrid side-by-side. Pixel-diff automated tests |
-| **Plugin ecosystem breakage** | High — third-party plugins referencing WPF internals will break | High | Provide `Stride.Core.Presentation.Interop` bridge. Document migration guide for plugin authors. Soft deprecation timeline (WPF support for 2 release cycles) |
-| **Input handling latency in 3D preview** | Medium — forwarding input through interop layer adds overhead | Low | Benchmark Phase 1. If latency > 5ms, implement direct input hook (bypass interop) |
-| **Accessibility regression** | Medium — screen readers, keyboard navigation may differ | Low | Early accessibility audit. Avalonia's AutomationPeer is less mature than WPF's — may need custom peers |
-| **Build system complexity** | Low — conditional MSBuild targets can be confusing | Medium | Document build matrix clearly. CI validates both WPF and Avalonia builds |
-| **Migration fatigue** | Medium — 4+ phase migration over 6-9 months | Medium | Ship value in each phase. Phase 1 (infrastructure) and Phase 2 (core controls) deliver tangible improvements |
+### Fork & Customize Approach
 
-## Migration Plan (High-Level)
+Given the 3-year timeline, we adopt a **fork-and-customize** strategy for critical third-party libraries. This reduces risk compared to building from scratch while maintaining full control over the codebase.
 
 ```
-Phase 1: Infrastructure (8-10 weeks)
-├── Create Stride.Core.Presentation.Avalonia project
-├── Port base controls (Window, UserControl, Styles, Converters)
-├── Set up dual-build system (conditional MSBuild targets)
-├── Implement WPF↔Avalonia interop bridge (HwndHost hosting)
-└── PoC: Host a simple Avalonia panel inside the WPF Game Studio
+Customization Strategy Matrix
+══════════════════════════════════════════════════════════════════
 
-Phase 2: Core Components (8-10 weeks)
-├── Port PropertyGrid to Avalonia (DataGrid-based)
-├── Integrate AvaloniaDock (replace AvalonDock)
-├── Port TreeView, EditableListBox, ColorPicker, WatermarkTextBox
-├── Port custom Themes/Styles
-└── Port common dialogs (OpenFile, SaveFile, FolderBrowser)
-
-Phase 3: Asset Editors (8-10 weeks)
-├── Port ScriptEditorView (RoslynPad.Avalonia)
-├── Port UIEditorView
-├── Port VisualScriptEditorView
-├── Port CurveEditorView
-├── Port MaterialEditorView
-└── Port AssetPickerView (thumbnail gallery, search)
-
-Phase 4: Game Studio & Preview (8-12 weeks)
-├── Port GameEngineHost (cross-platform HWND abstraction)
-├── Port 3D preview rendering pipeline
-├── Integrate 3D preview with Avalonia host
-├── Port main Game Studio window shell
-├── Port menu bar, toolbar, status bar
-├── Port session management and startup wizard
-├── Port settings dialogs
-├── Remove WPF interop bridge
-├── Remove WPF projects (cleanup)
-└── Finalize CI/CD pipelines
-
-Total Estimated Timeline: 32-42 weeks (8-10 months)
+Phase 1-2 (Hybrid Mode)              Phase 3-4 (Pure Avalonia)
+─────────────────────                 ─────────────────────
+AvalonDock (WPF)                      →  Customized Dock.Avalonia
+  │  fork Dirkster99/AvalonDock         │  fork wieslawsoltes/Dock
+  │  Keep existing API compatibility    │  Adapt Stride layout config
+  │  Reuse XmlLayoutSerializer          │  Implement XML-compatible serialization
+  │                                     │
+RoslynPad (WPF)                       →  RoslynPad.Avalonia
+  │  Existing integration unchanged     │  fork roslynpad/RoslynPad
+  │                                     │  Adapt Stride editor wrappers
+  │                                     │  Reuse RoslynHost/RoslynWorkspace
+  │                                     │
+GameEngineHost                        →  GameEngineHost (Cross-Platform)
+  │  WPF HwndHost                       │  IGameHost interface
+  │  Win32 message forwarding           │  Win32/X11/Mac implementations
 ```
 
-## Open Questions
+### Library-Specific Customization Plans
 
-1. **AvaloniaDock maturity**: Does AvaloniaDock support all AvalonDock features used in Stride (layout serialization, floating windows, auto-hide, MDI tabs)? Need a spike in Phase 1 to validate.
-2. **Avalonia 12 breaking changes**: Avalonia 12 made significant API changes. Need to evaluate: `Window` to `TopLevel`, renderer changes, input system changes. Do these affect the migration plan?
-3. **Stride rendering engine cross-platform**: Does Stride's rendering engine support Vulkan (Linux) and Metal (macOS) at a level suitable for the editor 3D viewport? Need to test with current Stride builds.
-4. **RoslynPad.Avalonia features**: Does RoslynPad.Avalonia support all RoslynPad features used (code lens, inline diagnostics, completion commit behaviors)? Need to verify.
-5. **Plugin API compatibility**: What is the public API surface that plugins consume? Should be documented before breaking changes.
-6. **NuGet package strategy**: Should Stride.Core.Presentation.Avalonia be a NuGet package? What's the versioning strategy during migration?
-7. **CI/CD matrix**: What build agents/OS combinations are needed? Linux/macOS build agents for cross-platform validation? Any cost implications?
+| Library | Source | License | Stars | Customization Path |
+|---------|--------|---------|-------|-------------------|
+| **AvalonDock** | `Dirkster99/AvalonDock` | MS-PL | 1.6k | Fork v5 branch, extend XmlLayoutSerializer for Stride compatibility |
+| **Dock.Avalonia** | `wieslawsoltes/Dock` | MIT | 1.4k | Fork, adapt Dock.Serializer.Xml, implement Stride-specific behaviors |
+| **RoslynPad** | `roslynpad/RoslynPad` | MIT | 2.8k | Fork, adapt ScriptTextEditor wrappers, reuse RoslynHost/RoslynWorkspace |
+
+**Key Insight**: Stride team members (including xen2) are already top contributors to RoslynPad, making this customization path well-understood.
+
+### Customization Workload Estimates
+
+| Customization Task | Original Estimate | Fork & Customize | Savings |
+|--------------------|-------------------|------------------|---------|
+| AvalonDock → Dock.Avalonia | 6-8 weeks (rewrite) | 4-6 weeks (customize) | 2 weeks |
+| RoslynPad → RoslynPad.Avalonia | 2-3 weeks (integration) | 1-2 weeks (fork) | 1 week |
+| AvalonDock customization (Phase 1-2) | Not counted | 2-3 weeks (fork + adapt) | New task |
+
+**Net Change**: Roughly flat, but significantly reduced technical risk.
+
+---
+
+## Risks / Trade-offs (Updated)
+
+| Risk | Impact | Likelihood | Mitigation | Updated Rating (3-year timeline) |
+|------|--------|-----------|------------|--------------------------------|
+| **macOS Metal rendering maturity** | High — editor viewport may not render on macOS | Medium | Spike in Phase 0 to validate MSL pipeline; fallback: MoltenVK or software rendering | 🔴 **HIGH** (Blocker) |
+| **AvalonDock → Dock feature gap** | High — missing layout persistence or floating windows | Medium | Fork wieslawsoltes/Dock, adapt XmlLayoutSerializer; Spike to validate all scenarios | 🟡 **MEDIUM** (Spike required) |
+| **Wayland window embedding** | High — Phase 1-2 interop only works on Windows | High | Protocol-level constraint; Phase 1-2 documented as Windows-only, cross-platform in Phase 3-4 | 🟡 **MEDIUM** (Known constraint) |
+| **PropertyGrid behavior differences** | Medium — subtle UX differences in inline editing | Low-medium | Comprehensive test harness; Pixel-diff automated tests | 🟢 **LOW** |
+| **Plugin ecosystem breakage** | High — third-party plugins referencing WPF internals | High | Interop bridge + migration guide; WPF support for 2 release cycles | 🟢 **LOW** (mitigated) |
+| **Input handling latency in 3D preview** | Medium — forwarding input through interop adds overhead | Low | Benchmark Phase 1; if >5ms, implement direct input hook | 🟢 **LOW** |
+| **Accessibility regression** | Medium — screen readers, keyboard navigation may differ | Low | Early accessibility audit; custom AutomationPeers if needed | 🟢 **LOW** |
+| **Build system complexity** | Low — conditional MSBuild targets can be confusing | Medium | Document build matrix clearly; CI validates both builds | 🟢 **LOW** |
+| **Team knowledge transfer** | Medium — Avalonia expertise needs to be built | Medium | 3-year timeline allows training; hire/train Avalonia specialists | 🟢 **LOW** (time buffer) |
+| **Third-party library maintenance** | Medium — forked libraries need ongoing maintenance | Low | Full control over forked repos; assign dedicated maintainer | 🟢 **LOW** |
+
+---
+
+## Migration Plan (3-Year Timeline)
+
+### Phase 0: Spike Validation (Year 1, Q1 — 12-16 weeks)
+
+**Goal**: Validate all technical blockers before committing to full migration.
+
+```
+S.1  Spike: Dock.Avalonia Feature Parity (2-3 weeks)
+     ├── Fork wieslawsoltes/Dock → Stridefork/Dock
+     ├── Test layout serialization (XML → JSON/XML/YAML compatibility)
+     ├── Validate 7 Stride docking panes restore correctly
+     ├── Test floating windows, auto-hide, MDI tabs
+     └── Decision: Proceed with Dock.Avalonia or fallback to Actipro Avalonia
+
+S.2  Spike: RoslynPad.Avalonia Integration (1-2 weeks)
+     ├── Fork roslynpad/RoslynPad → Stridefork/RoslynPad
+     ├── Integrate RoslynPad.Avalonia.Editor in Stride context
+     ├── Validate ScriptTextEditor/SimpleCodeTextEditor wrappers
+     ├── Test syntax highlighting, IntelliSense, diagnostics
+     └── Decision: Proceed with forked RoslynPad
+
+S.3  Spike: macOS Metal Rendering (2-3 weeks)
+     ├── Build Stride from source on Apple Silicon (M1/M2/M3)
+     ├── Test editor 3D viewport rendering via Metal/MSL
+     ├── Measure FPS, latency, visual fidelity
+     ├── Test SPIR-V → MSL conversion pipeline
+     └── Decision: Metal viable? If not, plan MoltenVK fallback (+4-8 weeks)
+
+S.4  Spike: WPF↔Avalonia Interop PoC (2-3 weeks)
+     ├── Implement AvaloniaInWpfHost (Avalonia Window in WPF HwndHost)
+     ├── Test input forwarding (keyboard, mouse, IME)
+     ├── Measure latency (target: <5ms additional)
+     ├── Test layout sync between WPF and Avalonia
+     └── Decision: Interop viable for Phase 1-2?
+
+S.5  Spike: Linux Vulkan Rendering (1-2 weeks)
+     ├── Build Stride on Ubuntu 22.04+
+     ├── Test editor 3D viewport via Vulkan
+     ├── Measure FPS, latency
+     └── Decision: Vulkan viable for editor viewport?
+
+S.6  Spike: PropertyGrid DataGrid PoC (1-2 weeks)
+     ├── Create basic Avalonia PropertyGrid using DataGrid
+     ├── Test property binding, editors, validation
+     ├── Compare UX with WPF PropertyGrid
+     └── Decision: DataGrid-based approach viable?
+
+Milestone 1 Decision Gate (End of Q1):
+├── ✅ All 6 Spikes pass → Proceed to Phase 1
+├── ⚠️ 1-2 Spikes fail → Execute fallback plans, add 4-8 weeks
+└── ❌ 3+ Spikes fail → Re-evaluate migration feasibility
+```
+
+### Phase 1: Infrastructure & Foundation (Year 1, Q2-Q4 — 16-20 weeks)
+
+```
+Q2: Fork Setup & Build System
+├── 1.1 Create Stridefork/Dock repository, fork wieslawsoltes/Dock
+├── 1.2 Create Stridefork/RoslynPad repository, fork roslynpad/RoslynPad
+├── 1.3 Set up dual-build system (conditional MSBuild targets)
+├── 1.4 Update SDK props (Stride.Build.Sdk.Editor) for Avalonia targets
+├── 1.5 Create Stride.Core.Presentation.Avalonia project
+└── 1.6 Create Stride.Core.Presentation.Interop project
+
+Q3: Interop Layer & Base Controls
+├── 1.7 Implement AvaloniaInWpfHost (embed Avalonia Window in WPF)
+├── 1.8 Implement WpfInAvaloniaHost (fallback: embed WPF in Avalonia)
+├── 1.9 Create interop service (clipboard, file dialogs, dispatcher)
+├── 1.10 Port base classes: WindowBase, UserControl, ViewModel binding
+├── 1.11 Port core converters (IValueConverter)
+├── 1.12 Create Avalonia resource dictionaries (styles, colors)
+└── 1.13 PoC: Host simple Avalonia panel ("About" dialog) in WPF Game Studio
+
+Q4: CI/CD & Testing Infrastructure
+├── 1.14 Set up Avalonia.Headless test project
+├── 1.15 Add GitHub Actions workflows (Windows/Linux/macOS)
+├── 1.16 Verify dual-build: same solution produces WPF + Avalonia
+├── 1.17 Document build matrix and CI/CD pipeline
+└── 1.18 Establish code review and merge guidelines for forked repos
+
+Milestone 2 Decision Gate (End of Q4):
+├── ✅ Dual-build system works → Proceed to Phase 2
+├── ⚠️ Interop layer has defects → Fix before continuing
+└── ❌ Build system not functional → Re-evaluate
+```
+
+### Phase 2: Core UI Components (Year 2, Q1-Q2 — 20-24 weeks)
+
+```
+Q1: PropertyGrid & Basic Controls
+├── 2.1 Implement Avalonia PropertyGrid (DataGrid-based)
+├── 2.2 Implement property editor types (String, Numeric, Boolean, Enum)
+├── 2.3 Implement complex editors (Color, Vector, Quaternion, AssetReference)
+├── 2.4 Implement PropertyGrid search/filter and category grouping
+├── 2.5 Implement IPropertyEditorProvider registry
+├── 2.6 Port EditableListBox, WatermarkTextBox
+├── 2.7 Port ColorPicker, TreeView (lazy loading, drag-drop)
+└── 2.8 Port additional controls from Stride.Core.Presentation.Wpf.Controls
+
+Q2: Docking & Themes
+├── 2.9 Adapt Dock.Serializer.Xml for Stride layout compatibility
+├── 2.10 Adapt Stride's AvalonDockHelper.IsVisible to Dock.Avalonia
+├── 2.11 Integrate customized Dock.Avalonia
+├── 2.12 Port layout persistence (save/restore)
+├── 2.13 Port AvalonDock pane templates/themes
+├── 2.14 Implement context-sensitive tool pane visibility
+├── 2.15 Port all custom Stride editor themes and styles
+├── 2.16 Port common dialogs (OpenFile, SaveFile, FolderBrowser)
+├── 2.17 Port message dialogs (Info, Warning, Error, Yes/No/Cancel)
+├── 2.18 Create side-by-side test harness (WPF vs Avalonia)
+└── 2.19 Create regression test suite for all core controls
+
+Milestone 3 Decision Gate (End of Year 2 Q2):
+├── ✅ PropertyGrid + Dock feature parity ≥90% → Proceed to Phase 3
+├── ⚠️ Feature gap <10% → Acceptable, iterate in parallel
+└── ❌ Feature gap >20% → Add 4-8 weeks for gap closure
+```
+
+### Phase 3: Asset Editors (Year 2, Q3-Q4 — 24-32 weeks)
+
+```
+Q3: Code Editors & UI Editors
+├── 3.1 Integrate forked RoslynPad.Avalonia
+├── 3.2 Adapt Stride's ScriptTextEditor wrapper
+├── 3.3 Adapt Stride's RoslynHost and RoslynWorkspace
+├── 3.4 Port ScriptEditorView (syntax highlighting, IntelliSense)
+├── 3.5 Port script file tree navigation panel
+├── 3.6 Port UIEditorView (WYSIWYG canvas, element selection)
+└── 3.7 Port VisualScriptEditorView (node graph, connections)
+
+Q4: Specialized Editors
+├── 3.8 Port CurveEditorView (animation curves, keyframes, tangents)
+├── 3.9 Port MaterialEditorView (shader graph, preview)
+├── 3.10 Port AssetPickerView (thumbnail gallery, search, filtering)
+├── 3.11 Port SpriteEditor, SoundEditor (if applicable)
+├── 3.12 Wire each Avalonia editor into WPF host via interop
+├── 3.13 Validate each editor in interop host (focus, input, layout)
+├── 3.14 Create automated rendering tests (screenshot comparison)
+└── 3.15 Document editor migration status and known issues
+
+Milestone 4 Decision Gate (End of Year 2 Q4):
+├── ✅ All 8 Asset Editors migrated → Proceed to Phase 4
+├── ⚠️ 1-2 Editors have defects → Acceptable, fix in parallel
+└── ❌ >3 Editors have defects → Add 4-8 weeks for fixes
+```
+
+### Phase 4: Game Studio & 3D Preview (Year 3, Q1-Q2 — 24-32 weeks)
+
+```
+Q1: GameEngineHost Cross-Platform
+├── 4.1 Define IGameHost interface for cross-platform HWND hosting
+├── 4.2 Implement Win32GameHost (SetParent + Win32 message forwarding)
+├── 4.3 Implement X11GameHost (XReparentWindow + X11 event monitoring)
+├── 4.4 Implement MacGameHost (NSView embedding + NSEvent monitoring)
+├── 4.5 Implement AvaloniaGameHost wrapping IGameHost in NativeControlHost
+├── 4.6 Create GameContext abstraction for platform-specific context
+├── 4.7 Port input forwarding (keyboard, mouse) to platform-agnostic events
+├── 4.8 Port DPI-aware resize logic for 3D viewport
+└── 4.9 Test 3D preview on all 3 platforms
+
+Q2: Main Window & Shell
+├── 4.10 Integrate 3D preview into Avalonia editor layout
+├── 4.11 Wire preview asset selection and property change updates
+├── 4.12 Port menu bar (File, Edit, View, Assets, Scene, Tools, Help)
+├── 4.13 Port toolbar (icons, dropdowns, toggle states)
+├── 4.14 Port status bar (progress, messages, clickable items)
+├── 4.15 Port startup wizard / new project dialog
+├── 4.16 Port settings/preferences dialog
+├── 4.17 Port project settings dialog
+├── 4.18 Port session management (recent projects, auto-save, crash recovery)
+├── 4.19 Switch main entry point from WPF Application to Avalonia AppBuilder
+├── 4.20 Validate full Game Studio on all 3 platforms
+└── 4.21 Document known issues and workarounds
+
+Milestone 5 Decision Gate (End of Year 3 Q2):
+├── ✅ All 3 platforms runnable → Proceed to Post-Migration
+├── ⚠️ 1 platform has defects → Fix before continuing
+└── ❌ >1 platform unusable → Re-evaluate
+```
+
+### Phase 5: Post-Migration Validation (Year 3, Q3-Q4 — 12-16 weeks)
+
+```
+Q3: Cleanup & Optimization
+├── 5.1 Remove WPF interop bridge
+├── 5.2 Archive or remove WPF projects from solution
+├── 5.3 Performance tuning (renderer settings, UI virtualization)
+├── 5.4 Memory optimization
+├── 5.5 Update public API documentation
+└── 5.6 Document migration guide for plugin developers
+
+Q4: Validation & Release
+├── 5.7 Full feature regression test (Windows)
+├── 5.8 Full feature regression test (Linux, Ubuntu 22.04+)
+├── 5.9 Full feature regression test (macOS, 13+)
+├── 5.10 Performance benchmark comparison (WPF vs Avalonia)
+├── 5.11 Accessibility audit (keyboard navigation, screen reader)
+├── 5.12 Plugin compatibility validation
+├── 5.13 Community beta testing (2 weeks)
+├── 5.14 Address feedback and edge cases
+├── 5.15 Finalize CI/CD: all 3 platforms build, test, package
+└── 5.16 Release Stride Game Studio with Avalonia UI
+
+Milestone 6: Release Gate (End of Year 3 Q4):
+├── ✅ All tests pass → Release
+└── ⚠️ Critical defects → Delay release, fix issues
+```
+
+---
+
+## Timeline Summary
+
+| Phase | Duration | Cumulative |
+|-------|----------|------------|
+| **Phase 0**: Spike Validation | 12-16 weeks | 3-4 months |
+| **Phase 1**: Infrastructure | 16-20 weeks | 7-9 months |
+| **Phase 2**: Core Components | 20-24 weeks | 12-15 months |
+| **Phase 3**: Asset Editors | 24-32 weeks | 18-23 months |
+| **Phase 4**: Game Studio | 24-32 weeks | 24-31 months |
+| **Phase 5**: Post-Migration | 12-16 weeks | 27-35 months |
+| **Buffer** | 15 weeks | — |
+| **Total** | **108-140 weeks** | **2.1-2.7 years** |
+
+**3-Year Timeline**: ✅ Within scope, with ~15 weeks buffer for unexpected issues.
+
+---
+
+## Open Questions (Updated)
+
+1. **macOS Metal rendering**: Does Stride's MSL pipeline (from SPIR-V rewrite) support macOS editor viewport rendering at acceptable FPS on Apple Silicon? **S.3 Spike required.**
+2. **Dock.Avalonia feature parity**: Does wieslawsoltes/Dock support all AvalonDock features used by Stride? Specifically test: layout serialization across sessions, floating window position restoration, auto-hide with docked tool windows, MDI tab tear-off. **S.1 Spike required.**
+3. **Wayland constraint**: Phase 1-2 interop is Windows-only due to Wayland's lack of window embedding support. Phase 3-4 (Pure Avalonia) removes this constraint. Is this acceptable?
+4. **Avalonia 12 breaking changes**: Avalonia 12 made significant API changes (`Window`→`TopLevel`, renderer changes, input system). Do these affect the migration plan? **S.4 Spike covers this.**
+5. **Plugin API surface**: What is the public API surface that plugins consume? Should be documented before breaking changes. **S.6 Spike covers this.**
+6. **Fork maintenance**: Who will maintain the forked repositories (Stridefork/Dock, Stridefork/RoslynPad)? Assign dedicated maintainer.
+7. **Team composition**: 5-7 person team recommended (see Team Configuration section). When can team be assembled?
+8. **CI/CD infrastructure**: What build agents/OS combinations are needed? Linux/macOS build agents for cross-platform validation? Any cost implications?
+9. **Fallback for macOS Metal**: If S.3 Spike fails, is MoltenVK or software rendering acceptable? Estimated additional effort: 4-8 weeks.
+10. **Actipro Avalonia fallback**: If Dock.Avalonia customization proves insufficient, is Actipro Avalonia (commercial, ~$1k/dev) acceptable as fallback?
