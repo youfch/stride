@@ -16,19 +16,13 @@ namespace Stride.GameStudio.Services
 
         public ICredentialsDialog CreateCredentialsDialog()
         {
-#if WPF
             return new CredentialsDialog(this);
-#else
-            return null!;
-#endif
         }
 
         public void ShowAboutPage()
         {
-#if WPF
             var page = new AboutPage(this);
             page.ShowModal().Forget();
-#endif
         }
 
     }

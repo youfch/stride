@@ -1,0 +1,29 @@
+<!-- Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp) -->
+<!-- Distributed under the MIT license. See the LICENSE.md file in the project root for more information. -->
+
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="Stride.GameStudio.View.AboutPage"
+        Title="About Stride"
+        Width="500" Height="400"
+        WindowStartupLocation="CenterScreen"
+        SizeToContent="WidthAndHeight"
+        CanResize="False"
+        x:CompileBindings="False">
+  <Grid RowDefinitions="*,Auto" Margin="20">
+    <StackPanel Grid.Row="0" Spacing="10">
+      <TextBlock Text="Stride Game Engine" FontSize="20" FontWeight="Bold"
+                 HorizontalAlignment="Center" />
+      <TextBlock Text="{Binding MarkdownBackers, FallbackValue=Loading...}"
+                 TextWrapping="Wrap" />
+    </StackPanel>
+    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10" Margin="0,10,0,0">
+      <Button Content="License" Click="License_OnClick" />
+      <Button Content="Third Party" Click="ThirdParty_OnClick" />
+      <Button Content="Close" Click="ButtonCloseClick" />
+    </StackPanel>
+  </Grid>
+</Window>
