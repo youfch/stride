@@ -1,0 +1,55 @@
+<!-- Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp) -->
+<!-- Distributed under the MIT license. See the LICENSE.md file in the project root for more information. -->
+
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Stride.GameStudio.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="Stride.GameStudio.View.GameStudioWindow"
+        Title="{Binding EditorTitle, RelativeSource={RelativeSource Self}}"
+        Width="1280" Height="900"
+        d:DataContext="{d:DesignInstance vm:GameStudioViewModel}"
+        x:Name="EditorWindow"
+        PreviewMouseDown="EditorWindowPreviewMouseDown">
+  <Grid RowDefinitions="Auto,*,Auto">
+    <!-- MENU -->
+    <Menu Grid.Row="0">
+      <MenuItem Header="_File">
+        <MenuItem Header="_New" Command="{Binding NewSessionCommand}" />
+        <MenuItem Header="_Open" Command="{Binding OpenSessionCommand}" />
+        <Separator />
+        <MenuItem Header="_Save" Command="{Binding Session.SaveSessionCommand}" />
+        <Separator />
+        <MenuItem Header="_Quit" />
+      </MenuItem>
+      <MenuItem Header="_Edit">
+        <MenuItem Header="_Undo" Command="{Binding Session.ActionHistory.UndoCommand}" />
+        <MenuItem Header="_Redo" Command="{Binding Session.ActionHistory.RedoCommand}" />
+      </MenuItem>
+      <MenuItem Header="_View">
+        <MenuItem Header="_Solution Explorer" IsChecked="{Binding Panels.SessionExplorerPanelVisible, Mode=TwoWay}" />
+        <MenuItem Header="_Asset View" IsChecked="{Binding Panels.AssetViewPanelVisible, Mode=TwoWay}" />
+        <MenuItem Header="_Property Grid" IsChecked="{Binding Panels.PropertyGridPanelVisible, Mode=TwoWay}" />
+      </MenuItem>
+      <MenuItem Header="_Help">
+        <MenuItem Header="_About..." Command="{Binding OpenAboutPageCommand}" />
+      </MenuItem>
+    </Menu>
+
+    <!-- CONTENT AREA -->
+    <Grid Grid.Row="1">
+      <Panel Name="DockPanelHost">
+        <TextBlock Text="Docking area - AvaloniaDock placeholder"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center" />
+      </Panel>
+    </Grid>
+
+    <!-- STATUS BAR -->
+    <Border Grid.Row="2" Background="{DynamicResource ThemeControlLowColor}" Padding="8,4">
+      <TextBlock Text="{Binding Status.StatusText, FallbackValue=Ready}" FontSize="11" />
+    </Border>
+  </Grid>
+</Window>

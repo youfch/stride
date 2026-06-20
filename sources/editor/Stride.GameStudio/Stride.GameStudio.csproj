@@ -37,11 +37,10 @@
     <PackageReference Include="Mono.Cecil" />
     <PackageReference Include="SSH.NET" />
     <!-- Avalonia packages for Avalonia UI framework -->
-    <PackageReference Include="Avalonia" Condition="'$(UIFramework)' == 'Avalonia'" Version="12.0.3" />
-    <PackageReference Include="Avalonia.Desktop" Condition="'$(UIFramework)' == 'Avalonia'" Version="12.0.3" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Condition="'$(UIFramework)' == 'Avalonia'" Version="12.0.3" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Condition="'$(UIFramework)' == 'Avalonia'" Version="12.0.3" />
-    <PackageReference Include="Avalonia.ReactiveUI" Condition="'$(UIFramework)' == 'Avalonia'" Version="12.0.3" />
+    <PackageReference Include="Avalonia" Condition="'$(UIFramework)' == 'Avalonia'" />
+    <PackageReference Include="Avalonia.Desktop" Condition="'$(UIFramework)' == 'Avalonia'" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Condition="'$(UIFramework)' == 'Avalonia'" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Condition="'$(UIFramework)' == 'Avalonia'" />
   </ItemGroup>
   <PropertyGroup Condition="'$(UIFramework)' == 'Wpf'">
     <UseWPF>true</UseWPF>
@@ -55,13 +54,16 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" Exclude="App.xaml" Condition="'$(UIFramework)' == 'Wpf'" />
-    <Page Include="**\*.axaml" SubType="Designer" Generator="Avalonia.Markup.Xaml.TemplatedCompiler.Compile" Condition="'$(UIFramework)' == 'Avalonia'" />
+    <!-- .xaml.cs files compiled only in WPF mode (they contain WPF-specific code) -->
     <Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" Condition="'$(UIFramework)' == 'Wpf'" />
+    <!-- Avalonia .axaml pages and their code-behind -->
+    <Page Include="**\*.axaml" SubType="Designer" Generator="MSBuild:Compile" Condition="'$(UIFramework)' == 'Avalonia'" />
     <Compile Update="**\*.axaml.cs" SubType="Code" DependentUpon="%(Filename)" Condition="'$(UIFramework)' == 'Avalonia'" />
     <ApplicationDefinition Include="App.xaml" Condition="'$(UIFramework)' == 'Wpf'">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <ApplicationDefinition Include="App.axaml" Condition="'$(UIFramework)' == 'Avalonia'" />
     <Compile Include="..\..\core\Stride.Core.IO\TemporaryFile.cs">
       <Link>Debugging\TemporaryFile.cs</Link>
     </Compile>
