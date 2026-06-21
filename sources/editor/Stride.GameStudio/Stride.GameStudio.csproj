@@ -15,8 +15,8 @@
     <StrideLocalized>true</StrideLocalized>
     <StrideNuGetResolverUI>true</StrideNuGetResolverUI>
     <StrideSTAThreadOnMain>true</StrideSTAThreadOnMain>
-    <!-- UI Framework: Wpf or Avalonia -->
-    <UIFramework Condition="'$(UIFramework)' == ''">Wpf</UIFramework>
+    <!-- UI Framework: Wpf or Avalonia (defaulting to Avalonia for migration) -->
+    <UIFramework Condition="'$(UIFramework)' == ''">Avalonia</UIFramework>
     <DefineConstants Condition="'$(UIFramework)' == 'Avalonia'">$(DefineConstants);AVALONIA</DefineConstants>
     <DefineConstants Condition="'$(UIFramework)' == 'Wpf'">$(DefineConstants);WPF</DefineConstants>
   </PropertyGroup>

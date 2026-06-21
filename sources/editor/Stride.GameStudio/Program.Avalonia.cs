@@ -269,45 +269,93 @@ public static class Program
             var viewModel = new NewOrOpenSessionTemplateCollectionViewModel(serviceProvider, startupWindow);
             startupWindow.Templates = viewModel;
             
-            // Show modal dialog and wait for result
-            await startupWindow.ShowModal();
+            // Show as modal dialog using a hidden owner window
+            var ownerWindow = new Window
+            {
+                Width = 0,
+                Height = 0,
+                WindowState = WindowState.Minimized,
+                ShowInTaskbar = false,
+                TransparencyLevelHint = new[] { WindowTransparencyLevel.Transparent },
+                Background = new Avalonia.Media.SolidColorBrush(Avalonia.Media.Colors.Transparent),
+            };
+            ownerWindow.Show();
+            
+            var dialogResult = await startupWindow.ShowDialog<DialogResult>(ownerWindow);
+            
+            System.IO.File.AppendAllText(
+                System.IO.Path.Combine(System.IO.Path.GetTempPath(), "gs-crash.log"),
+                $"[{DateTime.Now:HH:mm:ss.fff}] After ShowDialog, result={dialogResult}, NewSessionParams={startupWindow.NewSessionParameters != null}\n");
 
-            if (startupWindow.NewSessionParameters != null)
+            try
             {
-                var directory = startupWindow.NewSessionParameters.OutputDirectory;
-                var name = startupWindow.NewSessionParameters.OutputName;
-                var mruData = new MRUAdditionalDataCollection(InternalSettings.LoadProfileCopy, GameStudioInternalSettings.MostRecentlyUsedSessionsData, InternalSettings.WriteFile);
-                mruData.RemoveFile(UFile.Combine(UDirectory.Combine(directory, name), new UFile(name + SessionViewModel.SolutionExtension)));
-
-                var completed = await editor.NewSession(startupWindow.NewSessionParameters);
-            }
-            else if (startupWindow.ExistingSessionPath != null)
-            {
-                var completed = await editor.OpenSession(startupWindow.ExistingSessionPath);
-            }
-            else
-            {
-                // User cancelled, exit
-                ShutdownApp();
-                return;
-            }
-
-            if (editor.Session != null)
-            {
-                var mainWindow = new GameStudioWindow(editor);
-                if (app?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                if (startupWindow.NewSessionParameters != null)
                 {
-                    desktop.MainWindow = mainWindow;
-                    mainWindow.Show();
+                    var directory = startupWindow.NewSessionParameters.OutputDirectory;
+                    var name = startupWindow.NewSessionParameters.OutputName;
+                    var mruData = new MRUAdditionalDataCollection(InternalSettings.LoadProfileCopy, GameStudioInternalSettings.MostRecentlyUsedSessionsData, InternalSettings.WriteFile);
+                    mruData.RemoveFile(UFile.Combine(UDirectory.Combine(directory, name), new UFile(name + SessionViewModel.SolutionExtension)));
+
+                    var completed = await editor.NewSession(startupWindow.NewSessionParameters);
+                    System.IO.File.AppendAllText(
+                        System.IO.Path.Combine(System.IO.Path.GetTempPath(), "gs-crash.log"),
+                        $"[{DateTime.Now:HH:mm:ss.fff}] After NewSession, completed={completed}, Session={editor.Session != null}\n");
+                    if (!completed)
+                    {
+                        System.IO.File.AppendAllText(
+                            System.IO.Path.Combine(System.IO.Path.GetTempPath(), "gs-crash.log"),
+                            $"[{DateTime.Now:HH:mm:ss.fff}] editor.NewSession returned false\n");
+                    }
+                }
+                else if (startupWindow.ExistingSessionPath != null)
+                {
+                    var completed = await editor.OpenSession(startupWindow.ExistingSessionPath);
+                }
+                else
+                {
+                    // User cancelled, exit
+                    ShutdownApp();
+                    return;
+                }
+
+                if (editor.Session != null)
+                {
+                    try
+                    {
+                        var mainWindow = new GameStudioWindow(editor);
+                        if (app?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                        {
+                            desktop.MainWindow = mainWindow;
+                            mainWindow.Show();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log the crash details for debugging
+                        System.IO.File.AppendAllText(
+                            System.IO.Path.Combine(System.IO.Path.GetTempPath(), "gs-crash.log"),
+                            $"[{DateTime.Now:HH:mm:ss.fff}] GameStudioWindow error: {ex}\n");
+                        throw; // Let the outer catch handle it
+                    }
+                }
+                else
+                {
+                    ShutdownApp();
                 }
             }
-            else
+            catch (Exception ex)
             {
+                System.IO.File.AppendAllText(
+                    System.IO.Path.Combine(System.IO.Path.GetTempPath(), "gs-crash.log"),
+                    $"[{DateTime.Now:HH:mm:ss.fff}] Startup error: {ex}\n");
                 ShutdownApp();
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            System.IO.File.AppendAllText(
+                System.IO.Path.Combine(System.IO.Path.GetTempPath(), "gs-crash.log"),
+                $"[{DateTime.Now:HH:mm:ss.fff}] Startup outer error: {ex}\n");
             ShutdownApp();
         }
     }

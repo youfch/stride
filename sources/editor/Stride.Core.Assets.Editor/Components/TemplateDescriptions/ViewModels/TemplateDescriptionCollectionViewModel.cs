@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.ViewModels;
@@ -9,7 +11,7 @@ namespace Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels
 {
     public abstract class TemplateDescriptionCollectionViewModel : DispatcherViewModel
     {
-        private readonly ObservableList<ITemplateDescriptionViewModel> templates = new ObservableList<ITemplateDescriptionViewModel>();
+        private readonly ObservableCollection<ITemplateDescriptionViewModel> templates = new ObservableCollection<ITemplateDescriptionViewModel>();
 
         private TemplateDescriptionGroupViewModel selectedGroup;
         private ITemplateDescriptionViewModel selectedTemplate;
@@ -22,7 +24,7 @@ namespace Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels
         }
 
 
-        public IReadOnlyObservableCollection<ITemplateDescriptionViewModel> Templates => templates;
+        public ObservableCollection<ITemplateDescriptionViewModel> Templates => templates;
 
         public abstract IEnumerable<TemplateDescriptionGroupViewModel> RootGroups { get; }
 
@@ -50,7 +52,29 @@ namespace Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels
             templates.Clear();
             if (SelectedGroup != null)
             {
-                templates.AddRange(SelectedGroup.GetTemplatesRecursively());
+                var items = SelectedGroup.GetTemplatesRecursively().ToList();
+                foreach (var item in items)
+                {
+                    templates.Add(item);
+                }
+                
+                // Diagnostic logging
+                try
+                {
+                    File.AppendAllText(Path.Combine(Path.GetTempPath(), "gs-templates.log"),
+                        $"[{System.DateTime.Now:HH:mm:ss.fff}] UpdateTemplateList: SelectedGroup={SelectedGroup.Name}, Items={items.Count}\n");
+                }
+                catch { }
+            }
+            else
+            {
+                // Diagnostic logging
+                try
+                {
+                    File.AppendAllText(Path.Combine(Path.GetTempPath(), "gs-templates.log"),
+                        $"[{System.DateTime.Now:HH:mm:ss.fff}] UpdateTemplateList: SelectedGroup is NULL\n");
+                }
+                catch { }
             }
         }
 

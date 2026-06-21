@@ -4,15 +4,12 @@
 #if AVALONIA
 
 using System;
-using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Data.Converters;
-using Avalonia.Media;
 
 namespace Stride.GameStudio.View.Panels
 {
     /// <summary>
-    /// Converts a boolean to Visibility (True = Visible, False = Collapsed).
+    /// Passes bool through directly (for IsVisible bindings).
     /// </summary>
     public class BoolToVisibilityConverter : IValueConverter
     {
@@ -20,25 +17,17 @@ namespace Stride.GameStudio.View.Panels
 
         public object? Convert(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture)
         {
-            if (value is bool b)
-            {
-                return b ? Visibility.Visible : Visibility.Collapsed;
-            }
-            return Visibility.Collapsed;
+            return value is bool b ? b : false;
         }
 
         public object ConvertBack(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture)
         {
-            if (value is Visibility v)
-            {
-                return v == Visibility.Visible;
-            }
-            return false;
+            return value is bool b ? b : false;
         }
     }
 
     /// <summary>
-    /// Converts a boolean to Visibility (True = Collapsed, False = Visible).
+    /// Inverts a bool (for IsVisible bindings).
     /// </summary>
     public class InverseBoolToVisibilityConverter : IValueConverter
     {
@@ -46,20 +35,12 @@ namespace Stride.GameStudio.View.Panels
 
         public object? Convert(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture)
         {
-            if (value is bool b)
-            {
-                return b ? Visibility.Collapsed : Visibility.Visible;
-            }
-            return Visibility.Visible;
+            return value is bool b ? !b : true;
         }
 
         public object ConvertBack(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture)
         {
-            if (value is Visibility v)
-            {
-                return v == Visibility.Collapsed;
-            }
-            return true;
+            return value is bool b ? !b : true;
         }
     }
 }

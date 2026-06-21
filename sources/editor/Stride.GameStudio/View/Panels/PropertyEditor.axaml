@@ -1,49 +1,31 @@
-<!-- Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp) -->
-<!-- Distributed under the MIT license. See the LICENSE.md file in the project root for more information. -->
-
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Stride.GameStudio.View.Panels"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d"
-             x:Class="Stride.GameStudio.View.Panels.PropertyEditor">
-  <DockPanel LastChildFill="True">
+             x:Class="Stride.GameStudio.View.Panels.PropertyEditor"
+             x:CompileBindings="False">
+  <DockPanel>
     <!-- Boolean: CheckBox -->
     <CheckBox DockPanel.Dock="Left"
               IsChecked="{Binding NodeValue}"
-              Visibility="{Binding IsBoolean, Converter={x:Static local:BoolToVisibilityConverter.Instance}, FallbackValue=Collapsed}"
-              VerticalAlignment="Center"
-              Margin="0,0,4,0"/>
-
+              IsVisible="{Binding IsBoolean, Converter={x:Static local:BoolToVisibilityConverter.Instance}, FallbackValue=False}"
+              VerticalAlignment="Center" Margin="0,0,4,0"/>
     <!-- Numeric: TextBox -->
     <TextBox DockPanel.Dock="Left"
-             Text="{Binding NodeValue}"
-             Width="100"
-             Height="22"
-             IsReadOnly="{Binding IsReadOnly}"
-             VerticalAlignment="Center"
-             Visibility="{Binding IsNumeric, Converter={x:Static local:BoolToVisibilityConverter.Instance}, FallbackValue=Collapsed}"
+             Text="{Binding NodeValue}" Width="100" Height="22"
+             IsReadOnly="{Binding IsReadOnly}" VerticalAlignment="Center"
+             IsVisible="{Binding IsNumeric, Converter={x:Static local:BoolToVisibilityConverter.Instance}, FallbackValue=False}"
              Margin="0,0,4,0"/>
-
     <!-- String: TextBox -->
     <TextBox DockPanel.Dock="Left"
-             Text="{Binding NodeValue}"
-             Width="200"
-             Height="22"
-             IsReadOnly="{Binding IsReadOnly}"
-             VerticalAlignment="Center"
-             Visibility="{Binding IsString, Converter={x:Static local:BoolToVisibilityConverter.Instance}, FallbackValue=Collapsed}"
+             Text="{Binding NodeValue}" Width="200" Height="22"
+             IsReadOnly="{Binding IsReadOnly}" VerticalAlignment="Center"
+             IsVisible="{Binding IsString, Converter={x:Static local:BoolToVisibilityConverter.Instance}, FallbackValue=False}"
              Margin="0,0,4,0"/>
-
     <!-- Fallback: TextBox for unknown types -->
     <TextBox DockPanel.Dock="Left"
-             Text="{Binding NodeValue}"
-             Width="200"
-             Height="22"
-             IsReadOnly="{Binding IsReadOnly}"
-             VerticalAlignment="Center"
-             Visibility="{Binding IsBoolean, Converter={x:Static local:InverseBoolToVisibilityConverter.Instance}, FallbackValue=Collapsed}"
+             Text="{Binding NodeValue}" Width="200" Height="22"
+             IsReadOnly="{Binding IsReadOnly}" VerticalAlignment="Center"
+             IsVisible="{Binding IsBoolean, Converter={x:Static local:InverseBoolToVisibilityConverter.Instance}, FallbackValue=False}"
              Margin="0,0,4,0"/>
   </DockPanel>
 </UserControl>

@@ -15,7 +15,7 @@ namespace Stride.GameStudio.View.Panels
     /// <summary>
     /// A control that displays an appropriate editor for a property based on its type.
     /// </summary>
-    public partial class PropertyEditor : TemplatedControl
+    public partial class PropertyEditor : UserControl
     {
         public static readonly StyledProperty<NodeViewModel?> NodeProperty =
             AvaloniaProperty.Register<PropertyEditor, NodeViewModel?>(nameof(Node));

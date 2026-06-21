@@ -14,6 +14,11 @@
         WindowStartupLocation="CenterScreen"
         ShowInTaskbar="False"
         d:DataContext="{d:DesignInstance vm:NewOrOpenSessionTemplateCollectionViewModel}">
+  <Window.Styles>
+    <Style Selector="TreeViewItem">
+      <Setter Property="IsExpanded" Value="True"/>
+    </Style>
+  </Window.Styles>
   <DockPanel>
     <!-- ============================================================
          BOTTOM PANEL: buttons + form fields
@@ -103,7 +108,8 @@
       <Border Grid.Row="0" Grid.Column="0" BorderBrush="{DynamicResource StrideBorderBrush}"
               BorderThickness="0,0,1,0" Margin="0,0,10,0">
         <ScrollViewer>
-          <TreeView ItemsSource="{Binding RootGroups}"
+          <TreeView x:Name="GroupTreeView"
+                    ItemsSource="{Binding RootGroups}"
                     SelectedItem="{Binding SelectedGroup, Mode=TwoWay}"
                     Background="Transparent"
                     BorderThickness="0">
@@ -124,7 +130,7 @@
           <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Templates list -->
+        <!-- Template items -->
         <ListBox Grid.Row="0"
                  ItemsSource="{Binding Templates}"
                  SelectedItem="{Binding SelectedTemplate, Mode=TwoWay}"
@@ -133,27 +139,24 @@
                  HorizontalAlignment="Stretch">
           <ListBox.ItemTemplate>
             <DataTemplate>
-              <DockPanel MinHeight="56" Margin="0,0,-5,0">
-                <DockPanel Margin="18,0">
-                  <TextBlock DockPanel.Dock="Top" FontSize="16" Text="{Binding Name}"
-                             Foreground="{DynamicResource StrideForegroundBrush}"/>
-                  <TextBlock Text="{Binding Description}" TextWrapping="Wrap"
-                             Foreground="{DynamicResource StrideDisabledForegroundBrush}"
-                             TextTrimming="WordEllipsis"/>
-                </DockPanel>
-              </DockPanel>
+              <TextBlock Text="{Binding Name}" Foreground="White" Height="30" Margin="4,2"/>
             </DataTemplate>
           </ListBox.ItemTemplate>
         </ListBox>
 
-        <!-- Description panel -->
+        <!-- Description panel (name + FullDescription) -->
         <Border Grid.Row="1" Margin="0,10,0,0"
                 BorderBrush="{DynamicResource StrideBorderBrush}" BorderThickness="1"
                 Background="{DynamicResource StrideDarkBackgroundBrush}">
           <ScrollViewer Margin="10">
-            <TextBlock Text="{Binding SelectedTemplate.FullDescription}"
-                       TextWrapping="Wrap"
-                       Foreground="{DynamicResource StrideForegroundBrush}"/>
+            <StackPanel>
+              <TextBlock Text="{Binding SelectedTemplate.Name}"
+                         FontWeight="Bold"
+                         Foreground="{DynamicResource StrideForegroundBrush}"/>
+              <TextBlock Text="{Binding SelectedTemplate.FullDescription}"
+                         TextWrapping="Wrap" Margin="0,4,0,0"
+                         Foreground="{DynamicResource StrideForegroundBrush}"/>
+            </StackPanel>
           </ScrollViewer>
         </Border>
       </Grid>

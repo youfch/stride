@@ -198,6 +198,8 @@ namespace Stride.Core.Presentation.Windows
 
         private static void CheckDispatcher()
         {
+            if (dispatcher == null)
+                return; // Skip check in non-WPF mode (Avalonia)
             if (dispatcher.Thread != Thread.CurrentThread)
             {
                 const string message = "This method must be invoked from the dispatcher thread";

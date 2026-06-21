@@ -14,7 +14,7 @@ namespace Stride.GameStudio.View.Panels
     /// <summary>
     /// A control that displays a single row in the property grid, with support for expand/collapse of child nodes.
     /// </summary>
-    public partial class PropertyRowControl : TemplatedControl
+    public partial class PropertyRowControl : UserControl
     {
         public static readonly StyledProperty<NodeViewModel?> NodeProperty =
             AvaloniaProperty.Register<PropertyRowControl, NodeViewModel?>(nameof(Node));

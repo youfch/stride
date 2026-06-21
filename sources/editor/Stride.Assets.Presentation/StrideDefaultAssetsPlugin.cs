@@ -96,6 +96,10 @@ namespace Stride.Assets.Presentation
         /// <inheritdoc />
         protected override void Initialize(ILogger logger)
         {
+#if AVALONIA
+            // Skip WPF-specific template loading in Avalonia mode
+            return;
+#endif
             imageDictionary = (ResourceDictionary)Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/View/ImageDictionary.xaml", UriKind.RelativeOrAbsolute));
             animationPropertyTemplateDictionary = (ResourceDictionary)Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/View/AnimationPropertyTemplates.xaml", UriKind.RelativeOrAbsolute));
             entityPropertyTemplateDictionary = (ResourceDictionary)Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/View/EntityPropertyTemplates.xaml", UriKind.RelativeOrAbsolute));

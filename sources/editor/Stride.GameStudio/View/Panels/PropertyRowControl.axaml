@@ -1,57 +1,29 @@
-<!-- Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp) -->
-<!-- Distributed under the MIT license. See the LICENSE.md file in the project root for more information. -->
-
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Stride.GameStudio.View.Panels"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d"
-             x:Class="Stride.GameStudio.View.Panels.PropertyRowControl">
+             x:Class="Stride.GameStudio.View.Panels.PropertyRowControl"
+             x:CompileBindings="False">
   <StackPanel>
-    <!-- Property Row -->
     <DockPanel Margin="2,1" LastChildFill="False">
-      <!-- Expand/Collapse Toggle for nodes with children -->
-      <Button DockPanel.Dock="Left"
-              Width="20"
-              Height="20"
-              Padding="0"
-              Click="OnToggleExpand"
-              ToolTip.Tip="Toggle expand/collapse">
-        <TextBlock Text="▶"
-                   FontSize="8"
-                   VerticalAlignment="Center"
-                   HorizontalAlignment="Center"
-                   RenderTransformOrigin="0.5,0.5">
+      <Button DockPanel.Dock="Left" Width="20" Height="20" Padding="0"
+              Click="OnToggleExpand" ToolTip.Tip="Toggle expand/collapse">
+        <TextBlock Text="&#x25B6;" FontSize="8" VerticalAlignment="Center"
+                   HorizontalAlignment="Center" RenderTransformOrigin="0.5,0.5">
           <TextBlock.RenderTransform>
             <RotateTransform Angle="{Binding IsExpanded, Converter={x:Static local:BoolToAngleConverter.Instance}}"/>
           </TextBlock.RenderTransform>
         </TextBlock>
       </Button>
-
-      <!-- Property Name -->
-      <TextBlock DockPanel.Dock="Left"
-                 Text="{Binding DisplayName, FallbackValue='Property'}"
-                 Foreground="{DynamicResource StrideForegroundBrush}"
-                 Width="140"
-                 Margin="4,0,8,0"
-                 VerticalAlignment="Center"
+      <TextBlock DockPanel.Dock="Left" Text="{Binding DisplayName, FallbackValue='Property'}"
+                 Foreground="{DynamicResource StrideForegroundBrush}" Width="140"
+                 Margin="4,0,8,0" VerticalAlignment="Center"
                  ToolTip.Tip="{Binding DisplayPath, FallbackValue=''}"/>
-
-      <!-- Property Value -->
-      <local:PropertyEditor DockPanel.Dock="Left"
-                            Node="{Binding}"
-                            Width="200"
-                            Height="22"
-                            Margin="0,0,4,0"/>
+      <local:PropertyEditor DockPanel.Dock="Left" Node="{Binding}" Width="200" Height="22" Margin="0,0,4,0"/>
     </DockPanel>
-
-    <!-- Children (recursive) - always show, but collapsed by default -->
-    <ItemsControl ItemsSource="{Binding Children, FallbackValue={}}"
-                  Margin="16,0,0,0">
+    <ItemsControl ItemsSource="{Binding Children, FallbackValue={}}" Margin="16,0,0,0">
       <ItemsControl.ItemTemplate>
         <DataTemplate>
-          <local:PropertyRowControl DataContext="{Binding}" />
+          <local:PropertyRowControl DataContext="{Binding}"/>
         </DataTemplate>
       </ItemsControl.ItemTemplate>
     </ItemsControl>

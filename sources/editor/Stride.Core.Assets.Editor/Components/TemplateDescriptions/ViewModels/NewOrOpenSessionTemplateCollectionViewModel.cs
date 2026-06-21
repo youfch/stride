@@ -63,7 +63,7 @@ namespace Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels
             SelectedGroup = recentGroup.Templates.Count == 0 ? rootGroup : recentGroup;
         }
 
-        public override IEnumerable<TemplateDescriptionGroupViewModel> RootGroups { get { yield return recentGroup; yield return rootGroup; } }
+        public override IEnumerable<TemplateDescriptionGroupViewModel> RootGroups { get { yield return rootGroup; yield return recentGroup; } }
 
         public string SolutionName { get { return solutionName; } set { SetValue(ref solutionName, value); } }
 

@@ -10,15 +10,15 @@
 
     - StrideEditorTargetFramework: Windows UI framework (WPF or Avalonia)
     - StrideXplatEditorTargetFramework: Cross-platform editor/tool projects
-    - UIFramework: UI framework selection (Wpf/Avalonia, default: Wpf)
+    - UIFramework: UI framework selection (Wpf/Avalonia, default: Avalonia)
 
-    Dual-build mode: Set $(UIFramework)='Avalonia' to build Avalonia UI,
-    or $(UIFramework)='Wpf' (default) to build WPF UI.
+    Dual-build mode: Set $(UIFramework)='Avalonia' (default) to build Avalonia UI,
+    or $(UIFramework)='Wpf' to build WPF UI.
   -->
 
-  <!-- Default UI framework to Wpf for backward compatibility -->
+  <!-- Default UI framework to Avalonia (migration target) -->
   <PropertyGroup Condition="'$(UIFramework)' == ''">
-    <UIFramework>Wpf</UIFramework>
+    <UIFramework>Avalonia</UIFramework>
   </PropertyGroup>
 
   <!-- UI framework constants -->

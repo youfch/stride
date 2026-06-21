@@ -15,13 +15,8 @@ using Stride.Core.Presentation.Services;
 
 namespace Stride.GameStudio.View
 {
-    /// <summary>
-    /// Avalonia version of the project selection window.
-    /// </summary>
     public partial class ProjectSelectionWindow : Window, IModalDialog
     {
-        private TaskCompletionSource<DialogResult>? _showModalTcs;
-
         public ProjectSelectionWindow()
         {
             InitializeComponent();
@@ -35,50 +30,61 @@ namespace Stride.GameStudio.View
         public NewOrOpenSessionTemplateCollectionViewModel? Templates
         {
             get => DataContext as NewOrOpenSessionTemplateCollectionViewModel;
-            set => DataContext = value;
+            set
+            {
+                DataContext = value;
+                if (value != null)
+                {
+                    var g = value.SelectedGroup;
+                    if (g != null) value.SelectedGroup = g;
+                }
+            }
         }
 
-        // IModalDialog implementation
         public Task<DialogResult> ShowModal()
         {
-            _showModalTcs = new TaskCompletionSource<DialogResult>();
-            Show();
-            return _showModalTcs.Task;
+            // Handled by Program.Avalonia.cs via ShowDialog - kept for IModalDialog interface
+            return Task.FromResult(DialogResult.Cancel);
         }
 
         public void RequestClose(DialogResult result)
         {
-            _showModalTcs?.TrySetResult(result);
-            Close();
+            Close(result);
         }
 
         private void OnSelectClick(object? sender, RoutedEventArgs e)
         {
-            Close();
+            if (DataContext is NewOrOpenSessionTemplateCollectionViewModel vm && vm.SelectedTemplate != null)
+            {
+                CollectResult(vm);
+                Close(DialogResult.Ok);
+            }
         }
 
         private void OnCancelClick(object? sender, RoutedEventArgs e)
         {
-            _showModalTcs?.TrySetResult(DialogResult.Cancel);
-            Close();
+            Close(DialogResult.Cancel);
         }
 
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
+        }
 
-            // Collect result from ViewModel
-            if (DataContext is NewOrOpenSessionTemplateCollectionViewModel vm && vm.SelectedTemplate != null)
+        private void CollectResult(NewOrOpenSessionTemplateCollectionViewModel vm)
+        {
+            if (vm.SelectedTemplate is ExistingProjectViewModel existingProject)
             {
-                if (vm.SelectedTemplate is ExistingProjectViewModel existingProject)
-                {
-                    ExistingSessionPath = existingProject.Path;
-                }
-                else if (vm.SelectedTemplate is TemplateDescriptionViewModel templateDesc)
+                ExistingSessionPath = existingProject.Path;
+            }
+            else if (vm.SelectedTemplate is ITemplateDescriptionViewModel templateDesc)
+            {
+                var template = templateDesc.GetTemplate();
+                if (template != null)
                 {
                     NewSessionParameters = new NewSessionParameters
                     {
-                        TemplateDescription = templateDesc.GetTemplate(),
+                        TemplateDescription = template,
                         OutputName = vm.Name,
                         OutputDirectory = vm.Location,
                         SolutionName = vm.SolutionName,
@@ -86,10 +92,6 @@ namespace Stride.GameStudio.View
                     };
                 }
             }
-
-            _showModalTcs?.TrySetResult(ExistingSessionPath != null || NewSessionParameters != null
-                ? DialogResult.Ok
-                : DialogResult.Cancel);
         }
     }
 }
