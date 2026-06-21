@@ -69,16 +69,23 @@
                        FontSize="12" FontWeight="Bold"
                        Margin="8,6" Foreground="{DynamicResource StrideForegroundBrush}"/>
             <ScrollViewer>
-              <TreeView x:Name="SolutionTreeView"
+              <TreeView ItemsSource="{Binding Session.PackageCategories}"
                         Background="Transparent" BorderThickness="0"
                         Foreground="{DynamicResource StrideForegroundBrush}">
-                <TreeViewItem Header="Loading..." IsEnabled="False"/>
+                <TreeView.ItemTemplate>
+                  <TreeDataTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                      <TextBlock Text="{Binding Name}" 
+                                 Foreground="{DynamicResource StrideForegroundBrush}"/>
+                    </StackPanel>
+                  </TreeDataTemplate>
+                </TreeView.ItemTemplate>
               </TreeView>
             </ScrollViewer>
           </DockPanel>
         </Border>
 
-        <!-- CENTER: Editor area / Asset View -->
+        <!-- CENTER: Asset View + 3D Preview -->
         <Grid Grid.Column="1">
           <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -86,26 +93,39 @@
           </Grid.RowDefinitions>
 
           <!-- Asset View -->
-          <Border Grid.Row="0"
-                  IsVisible="{Binding Panels.AssetViewPanelVisible}"
-                  BorderBrush="{DynamicResource StrideBorderBrush}" BorderThickness="0,0,0,1">
+          <Border Grid.Row="0" Margin="8,8,8,4"
+                  BorderBrush="{DynamicResource StrideBorderBrush}" BorderThickness="1"
+                  IsVisible="{Binding Panels.AssetViewPanelVisible}">
             <DockPanel>
               <TextBlock DockPanel.Dock="Top" Text="Asset View"
                          FontSize="12" FontWeight="Bold"
                          Margin="8,6" Foreground="{DynamicResource StrideForegroundBrush}"/>
-              <Border Background="{DynamicResource StrideDarkBackgroundBrush}" Margin="8">
-                <TextBlock Text="Asset preview area"
+              <ListBox ItemsSource="{Binding Session.ActiveAssetView.Assets}"
+                       Background="Transparent" BorderThickness="0"
+                       Foreground="{DynamicResource StrideForegroundBrush}">
+                <ListBox.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding Name}" Margin="4,2"/>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+            </DockPanel>
+          </Border>
+
+          <!-- 3D Scene Preview -->
+          <Border Grid.Row="1" Margin="8,4,8,8"
+                  BorderBrush="{DynamicResource StrideBorderBrush}" BorderThickness="1"
+                  Background="{DynamicResource StrideDarkBackgroundBrush}">
+            <DockPanel>
+              <TextBlock DockPanel.Dock="Top" Text="Scene Preview"
+                         FontSize="12" FontWeight="Bold"
+                         Margin="8,6" Foreground="{DynamicResource StrideForegroundBrush}"/>
+              <Border Background="#FF1E1E1E" Margin="8" CornerRadius="4">
+                <TextBlock Text="3D Viewport"
                            Foreground="{DynamicResource StrideDisabledForegroundBrush}"
                            HorizontalAlignment="Center" VerticalAlignment="Center"/>
               </Border>
             </DockPanel>
-          </Border>
-
-          <!-- Main editor / 3D preview -->
-          <Border Grid.Row="1" Margin="8">
-            <TextBlock Text="3D Scene Preview"
-                       Foreground="{DynamicResource StrideDisabledForegroundBrush}"
-                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
           </Border>
         </Grid>
 
@@ -118,12 +138,11 @@
                        FontSize="12" FontWeight="Bold"
                        Margin="8,6" Foreground="{DynamicResource StrideForegroundBrush}"/>
             <ScrollViewer>
-              <Border Background="{DynamicResource StrideDarkBackgroundBrush}" Margin="8"
-                      MinHeight="200">
-                <TextBlock Text="Property grid"
+              <StackPanel Margin="8" Spacing="8">
+                <TextBlock Text="No asset selected"
                            Foreground="{DynamicResource StrideDisabledForegroundBrush}"
-                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
-              </Border>
+                           FontStyle="Italic"/>
+              </StackPanel>
             </ScrollViewer>
           </DockPanel>
         </Border>
