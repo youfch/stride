@@ -150,6 +150,11 @@
     <PackageVersion Include="RoslynPad.Roslyn" Version="4.12.1" />
     <PackageVersion Include="RoslynPad.Roslyn.Windows" Version="4.12.1" />
   </ItemGroup>
+  <!-- Avalonia dependencies -->
+  <ItemGroup>
+    <PackageVersion Include="Dock.Avalonia" Version="12.0.0" />
+    <PackageVersion Include="Dock.Model.Avalonia" Version="12.0.0" />
+  </ItemGroup>
   <!-- Analyzers -->
   <ItemGroup>
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" PrivateAssets="all" />

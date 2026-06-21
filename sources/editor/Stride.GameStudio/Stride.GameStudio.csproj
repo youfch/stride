@@ -41,6 +41,8 @@
     <PackageReference Include="Avalonia.Desktop" Condition="'$(UIFramework)' == 'Avalonia'" />
     <PackageReference Include="Avalonia.Themes.Fluent" Condition="'$(UIFramework)' == 'Avalonia'" />
     <PackageReference Include="Avalonia.Fonts.Inter" Condition="'$(UIFramework)' == 'Avalonia'" />
+    <PackageReference Include="Dock.Avalonia" Condition="'$(UIFramework)' == 'Avalonia'" />
+    <PackageReference Include="Dock.Model.Avalonia" Condition="'$(UIFramework)' == 'Avalonia'" />
   </ItemGroup>
   <ItemGroup Condition="'$(UIFramework)' == 'Avalonia'">
     <ProjectReference Include="..\..\presentation\Stride.Core.Presentation.Avalonia\Stride.Core.Presentation.Avalonia.csproj" />

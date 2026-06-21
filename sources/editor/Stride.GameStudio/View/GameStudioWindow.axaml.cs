@@ -10,6 +10,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core.Presentation.Windows;
+using Stride.GameStudio.Controls;
 using Stride.GameStudio.Helpers;
 using Stride.GameStudio.ViewModels;
 
@@ -26,6 +27,7 @@ namespace Stride.GameStudio.View
         public GameStudioWindow()
         {
             InitializeComponent();
+            InitializeDocking();
         }
 
         public GameStudioWindow(EditorViewModel editor)
@@ -33,18 +35,24 @@ namespace Stride.GameStudio.View
             if (editor == null) throw new ArgumentNullException(nameof(editor));
             DataContext = editor;
             InitializeComponent();
+            InitializeDocking();
         }
 
         public EditorViewModel Editor => (EditorViewModel)DataContext;
 
         public string EditorTitle => Editor.Session.SolutionPath != null
-            ? $"{Editor.Session.SolutionPath.GetFileName()} - {StrideGameStudio.EditorName}"
-            : StrideGameStudio.EditorName;
+            ? $"{Editor.Session.SolutionPath.GetFileName()} - Game Studio"
+            : "Game Studio";
 
         public Task<bool> TryClose()
         {
             Close();
             return Task.FromResult(true);
+        }
+
+        private void InitializeDocking()
+        {
+            GameStudioDockFactory.InitializeLayout(MainDockControl);
         }
     }
 }

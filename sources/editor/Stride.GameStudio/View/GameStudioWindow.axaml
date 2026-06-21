@@ -4,6 +4,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:Stride.GameStudio.ViewModels"
+        xmlns:dock="clr-namespace:Dock.Avalonia.Controls;assembly=Dock.Avalonia"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
@@ -41,113 +42,8 @@
       </MenuItem>
     </Menu>
 
-    <!-- DOCK LAYOUT (visible when session is loaded) -->
-    <Grid Grid.Row="1" x:Name="DockGrid">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto"/>  <!-- Toolbar -->
-        <RowDefinition Height="*"/>     <!-- Panels + Editor -->
-      </Grid.RowDefinitions>
-
-      <!-- TOOLBAR -->
-      <WrapPanel Grid.Row="0" Margin="4,2">
-        <Button Command="{Binding NewSessionCommand}" ToolTip.Tip="New Project" Margin="2,0">New</Button>
-        <Button Command="{Binding OpenSessionCommand}" ToolTip.Tip="Open" Margin="2,0">Open</Button>
-        <Button Command="{Binding Session.SaveSessionCommand}" ToolTip.Tip="Save" Margin="2,0">Save</Button>
-        <Separator Width="1" Height="20" Margin="4,0" />
-        <Button Command="{Binding Debugging.BuildProjectCommand}" ToolTip.Tip="Build" Margin="2,0">Build</Button>
-        <Button Command="{Binding Debugging.StartProjectCommand}" ToolTip.Tip="Run" Margin="2,0">Run</Button>
-      </WrapPanel>
-
-      <!-- Panels + Editor -->
-      <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto">
-        <!-- LEFT: Solution Explorer -->
-        <Border Grid.Column="0" Width="280"
-                IsVisible="{Binding Panels.SessionExplorerPanelVisible}"
-                BorderBrush="{DynamicResource StrideBorderBrush}" BorderThickness="0,0,1,0">
-          <DockPanel>
-            <TextBlock DockPanel.Dock="Top" Text="Solution Explorer"
-                       FontSize="12" FontWeight="Bold"
-                       Margin="8,6" Foreground="{DynamicResource StrideForegroundBrush}"/>
-            <ScrollViewer>
-              <TreeView ItemsSource="{Binding Session.PackageCategories}"
-                        Background="Transparent" BorderThickness="0"
-                        Foreground="{DynamicResource StrideForegroundBrush}">
-                <TreeView.ItemTemplate>
-                  <TreeDataTemplate>
-                    <StackPanel Orientation="Horizontal" Spacing="4">
-                      <TextBlock Text="{Binding Name}" 
-                                 Foreground="{DynamicResource StrideForegroundBrush}"/>
-                    </StackPanel>
-                  </TreeDataTemplate>
-                </TreeView.ItemTemplate>
-              </TreeView>
-            </ScrollViewer>
-          </DockPanel>
-        </Border>
-
-        <!-- CENTER: Asset View + 3D Preview -->
-        <Grid Grid.Column="1">
-          <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="2*"/>
-          </Grid.RowDefinitions>
-
-          <!-- Asset View -->
-          <Border Grid.Row="0" Margin="8,8,8,4"
-                  BorderBrush="{DynamicResource StrideBorderBrush}" BorderThickness="1"
-                  IsVisible="{Binding Panels.AssetViewPanelVisible}">
-            <DockPanel>
-              <TextBlock DockPanel.Dock="Top" Text="Asset View"
-                         FontSize="12" FontWeight="Bold"
-                         Margin="8,6" Foreground="{DynamicResource StrideForegroundBrush}"/>
-              <ListBox ItemsSource="{Binding Session.ActiveAssetView.Assets}"
-                       Background="Transparent" BorderThickness="0"
-                       Foreground="{DynamicResource StrideForegroundBrush}">
-                <ListBox.ItemTemplate>
-                  <DataTemplate>
-                    <TextBlock Text="{Binding Name}" Margin="4,2"/>
-                  </DataTemplate>
-                </ListBox.ItemTemplate>
-              </ListBox>
-            </DockPanel>
-          </Border>
-
-          <!-- 3D Scene Preview -->
-          <Border Grid.Row="1" Margin="8,4,8,8"
-                  BorderBrush="{DynamicResource StrideBorderBrush}" BorderThickness="1"
-                  Background="{DynamicResource StrideDarkBackgroundBrush}">
-            <DockPanel>
-              <TextBlock DockPanel.Dock="Top" Text="Scene Preview"
-                         FontSize="12" FontWeight="Bold"
-                         Margin="8,6" Foreground="{DynamicResource StrideForegroundBrush}"/>
-              <Border Background="#FF1E1E1E" Margin="8" CornerRadius="4">
-                <TextBlock Text="3D Viewport"
-                           Foreground="{DynamicResource StrideDisabledForegroundBrush}"
-                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
-              </Border>
-            </DockPanel>
-          </Border>
-        </Grid>
-
-        <!-- RIGHT: Property Grid -->
-        <Border Grid.Column="2" Width="280"
-                IsVisible="{Binding Panels.PropertyGridPanelVisible}"
-                BorderBrush="{DynamicResource StrideBorderBrush}" BorderThickness="1,0,0,0">
-          <DockPanel>
-            <TextBlock DockPanel.Dock="Top" Text="Property Grid"
-                       FontSize="12" FontWeight="Bold"
-                       Margin="8,6" Foreground="{DynamicResource StrideForegroundBrush}"/>
-            <ScrollViewer>
-              <StackPanel Margin="8" Spacing="8">
-                <TextBlock Text="No asset selected"
-                           Foreground="{DynamicResource StrideDisabledForegroundBrush}"
-                           FontStyle="Italic"/>
-              </StackPanel>
-            </ScrollViewer>
-          </DockPanel>
-        </Border>
-      </Grid>
-    </Grid>
+    <!-- DOCK CONTROL (initialized in code-behind) -->
+    <dock:DockControl x:Name="MainDockControl" Grid.Row="1" />
 
     <!-- Welcome message when no session loaded -->
     <Border Grid.Row="1" Background="{DynamicResource StrideDarkBackgroundBrush}"
