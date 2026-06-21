@@ -3,51 +3,160 @@
 
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:Stride.GameStudio.ViewModels"
+        xmlns:vm="clr-namespace:Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels;assembly=Stride.Core.Assets.Editor"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         x:Class="Stride.GameStudio.View.ProjectSelectionWindow"
         x:CompileBindings="False"
-        Title="Project Selection"
+        Title="Project selection - Stride Game Studio"
         Width="1024" Height="768"
         WindowStartupLocation="CenterScreen"
         ShowInTaskbar="False"
-        d:DataContext="{d:DesignInstance vm:GameStudioViewModel}">
+        d:DataContext="{d:DesignInstance vm:NewOrOpenSessionTemplateCollectionViewModel}">
   <DockPanel>
-    <!-- Bottom panel with buttons -->
-    <DockPanel DockPanel.Dock="Bottom" Margin="20">
-      <Button DockPanel.Dock="Left" Content="Browse for existing project" 
-              Command="{Binding OpenSessionCommand}" Padding="20,6"/>
-      <CheckBox DockPanel.Dock="Left" Margin="8,0,20,0"
-                Content="Reload last session automatically at startup"
-                IsChecked="{Binding ReloadLastSession}"/>
-      <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-        <Button Content="Cancel" Padding="20,6" Margin="10,0,0,0" IsCancel="True"/>
-      </StackPanel>
-    </DockPanel>
+    <!-- ============================================================
+         BOTTOM PANEL: buttons + form fields
+         ============================================================ -->
+    <Grid DockPanel.Dock="Bottom">
+      <DockPanel>
+        <!-- Buttons row -->
+        <DockPanel DockPanel.Dock="Bottom" Margin="20">
+          <Button DockPanel.Dock="Left" Content="Browse for existing project"
+                  Command="{Binding BrowseForExistingProjectCommand}" Padding="20,6"/>
+          <CheckBox IsChecked="{Binding AutoReloadSession}"
+                    Content="Reload last session automatically at startup"
+                    VerticalAlignment="Center" Margin="8"/>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="SelectButton" Content="Select" Padding="20,6" Margin="10,0,0,0"
+                    Click="OnSelectClick" ToolTip.Tip="Use the selected template"/>
+            <Button Content="Cancel" Padding="20,6" Margin="10,0,0,0" IsCancel="True"
+                    Click="OnCancelClick" ToolTip.Tip="Cancel (Esc)"/>
+          </StackPanel>
+        </DockPanel>
 
-    <!-- Main content area - template browser or project list -->
-    <StackPanel Margin="20" Spacing="10">
-      <TextBlock Text="Select a project template or open an existing project:" 
-                 FontSize="16" FontWeight="Bold"/>
-      
-      <ListBox ItemsSource="{Binding AvailableTemplates}" 
-               SelectedItem="{Binding SelectedTemplate}"
-               Height="400">
-        <ListBox.ItemTemplate>
-          <DataTemplate>
-            <DockPanel Margin="5">
-              <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="Bold"/>
-              <TextBlock Text="{Binding Description}" TextWrapping="Wrap"/>
-            </DockPanel>
-          </DataTemplate>
-        </ListBox.ItemTemplate>
-      </ListBox>
+        <!-- Form fields (Name, Location, SolutionName, SolutionLocation) -->
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
 
-      <Button Content="Create New Project from Selected Template" 
-              Command="{Binding CreateNewSessionCommand}" 
-              Padding="20,6" Margin="0,10,0,0"/>
-    </StackPanel>
+          <!-- Name -->
+          <TextBlock Grid.Row="0" Grid.Column="0" Text="Name:" Margin="20,0" VerticalAlignment="Center"
+                     Foreground="{DynamicResource StrideForegroundBrush}"/>
+          <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="2"
+                   Text="{Binding Name}" Watermark=""/>
+
+          <!-- Location -->
+          <TextBlock Grid.Row="1" Grid.Column="0" Text="Location:" Margin="20,0" VerticalAlignment="Center"
+                     Foreground="{DynamicResource StrideForegroundBrush}"/>
+          <DockPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+            <Button DockPanel.Dock="Right" Width="28" Height="22" Margin="2,0,0,0"
+                    Command="{Binding BrowseDirectoryCommand}" CommandParameter="Location"
+                    ToolTip.Tip="Browse directory">...</Button>
+            <TextBox Margin="2" Text="{Binding Location}" IsReadOnly="True"/>
+          </DockPanel>
+
+          <!-- Solution name -->
+          <TextBlock Grid.Row="2" Grid.Column="0" Text="Solution name:" Margin="20,0" VerticalAlignment="Center"
+                     Foreground="{DynamicResource StrideForegroundBrush}"/>
+          <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="2"
+                   Text="{Binding SolutionName}"
+                   Watermark="(Auto-generate solution name)"/>
+
+          <!-- Solution location -->
+          <TextBlock Grid.Row="3" Grid.Column="0" Text="Solution location:" Margin="20,0" VerticalAlignment="Center"
+                     Foreground="{DynamicResource StrideForegroundBrush}"/>
+          <DockPanel Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2">
+            <Button DockPanel.Dock="Right" Width="28" Height="22" Margin="2,0,0,0"
+                    Command="{Binding BrowseDirectoryCommand}" CommandParameter="SolutionLocation"
+                    ToolTip.Tip="Browse directory">...</Button>
+            <TextBox Margin="2" Text="{Binding SolutionLocation}" IsReadOnly="True"
+                     Watermark="(Same location)"/>
+          </DockPanel>
+        </Grid>
+      </DockPanel>
+    </Grid>
+
+    <!-- ============================================================
+         TEMPLATE BROWSER (fills remaining space)
+         ============================================================ -->
+    <Grid Margin="10">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="2*"/>
+        <ColumnDefinition Width="3*"/>
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+
+      <!-- LEFT: Group tree -->
+      <Border Grid.Row="0" Grid.Column="0" BorderBrush="{DynamicResource StrideBorderBrush}"
+              BorderThickness="0,0,1,0" Margin="0,0,10,0">
+        <ScrollViewer>
+          <TreeView ItemsSource="{Binding RootGroups}"
+                    SelectedItem="{Binding SelectedGroup, Mode=TwoWay}"
+                    Background="Transparent"
+                    BorderThickness="0">
+            <TreeView.ItemTemplate>
+              <TreeDataTemplate ItemsSource="{Binding SubGroups}">
+                <TextBlock Text="{Binding Name}" Margin="4,2"
+                           Foreground="{DynamicResource StrideForegroundBrush}"/>
+              </TreeDataTemplate>
+            </TreeView.ItemTemplate>
+          </TreeView>
+        </ScrollViewer>
+      </Border>
+
+      <!-- RIGHT: Templates list + description -->
+      <Grid Grid.Row="0" Grid.Column="1">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="*"/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Templates list -->
+        <ListBox Grid.Row="0"
+                 ItemsSource="{Binding Templates}"
+                 SelectedItem="{Binding SelectedTemplate, Mode=TwoWay}"
+                 Background="Transparent"
+                 BorderThickness="0"
+                 HorizontalAlignment="Stretch">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <DockPanel MinHeight="56" Margin="0,0,-5,0">
+                <DockPanel Margin="18,0">
+                  <TextBlock DockPanel.Dock="Top" FontSize="16" Text="{Binding Name}"
+                             Foreground="{DynamicResource StrideForegroundBrush}"/>
+                  <TextBlock Text="{Binding Description}" TextWrapping="Wrap"
+                             Foreground="{DynamicResource StrideDisabledForegroundBrush}"
+                             TextTrimming="WordEllipsis"/>
+                </DockPanel>
+              </DockPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- Description panel -->
+        <Border Grid.Row="1" Margin="0,10,0,0"
+                BorderBrush="{DynamicResource StrideBorderBrush}" BorderThickness="1"
+                Background="{DynamicResource StrideDarkBackgroundBrush}">
+          <ScrollViewer Margin="10">
+            <TextBlock Text="{Binding SelectedTemplate.FullDescription}"
+                       TextWrapping="Wrap"
+                       Foreground="{DynamicResource StrideForegroundBrush}"/>
+          </ScrollViewer>
+        </Border>
+      </Grid>
+    </Grid>
   </DockPanel>
 </Window>
