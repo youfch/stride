@@ -39,12 +39,11 @@
                  ToolTip.Tip="{Binding DisplayPath, FallbackValue=''}"/>
 
       <!-- Property Value -->
-      <TextBox Text="{Binding NodeValue, FallbackValue=''}"
-               Width="200"
-               Height="22"
-               IsReadOnly="{Binding IsReadOnly, FallbackValue=True}"
-               VerticalAlignment="Center"
-               Margin="0,0,4,0"/>
+      <local:PropertyEditor DockPanel.Dock="Left"
+                            Node="{Binding}"
+                            Width="200"
+                            Height="22"
+                            Margin="0,0,4,0"/>
     </DockPanel>
 
     <!-- Children (recursive) - always show, but collapsed by default -->
