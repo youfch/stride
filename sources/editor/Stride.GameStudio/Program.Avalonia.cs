@@ -153,7 +153,8 @@ public static class Program
                 MainDispatcher.InvokeAsync(() => Startup(initialSessionPath));
 
                 // Build Avalonia app
-                var builder = AppBuilder.Configure<App>();
+                var builder = AppBuilder.Configure<App>()
+                    .UsePlatformDetect();
 
                 app = (App)builder.Instance;
                 StrideGameStudio.MetricsClient?.SetActiveState(true);
