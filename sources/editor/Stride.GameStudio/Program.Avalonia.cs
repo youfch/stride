@@ -154,7 +154,8 @@ public static class Program
 
                 // Build Avalonia app
                 var builder = AppBuilder.Configure<App>()
-                    .UsePlatformDetect();
+                    .UsePlatformDetect()
+                    .UseSkia();
 
                 app = (App)builder.Instance;
                 StrideGameStudio.MetricsClient?.SetActiveState(true);
@@ -264,10 +265,12 @@ public static class Program
             }
 
             // No session successfully loaded, open the new/open project window
-            var startupWindow = new ProjectSelectionWindow();
+            var startupWindow = new Stride.GameStudio.View.ProjectSelectionWindow();
             var viewModel = new NewOrOpenSessionTemplateCollectionViewModel(serviceProvider, startupWindow);
             startupWindow.Templates = viewModel;
-            startupWindow.ShowDialog();
+            
+            // Show modal dialog and wait for result
+            await startupWindow.ShowModal();
 
             if (startupWindow.NewSessionParameters != null)
             {

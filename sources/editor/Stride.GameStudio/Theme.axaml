@@ -14,7 +14,6 @@
   <Color x:Key="StrideHighlightAltColor">#FF1C97EA</Color>
   <Color x:Key="StrideForegroundColor">#FFF0F0F0</Color>
   <Color x:Key="StrideDisabledForegroundColor">#FF656565</Color>
-  <Color x:Key="StrideForegroundBrush">#FFF0F0F0</Color>
   <Color x:Key="StrideBorderColor">#FF3F3F46</Color>
   <Color x:Key="StrideStatusBarColor">#FF007ACC</Color>
 

@@ -27,10 +27,6 @@ public partial class App : Application
     {
         base.OnFrameworkInitializationCompleted();
 
-#if DEBUG
-        this.AttachDevTools();
-#endif
-
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.Exit += OnExit;
