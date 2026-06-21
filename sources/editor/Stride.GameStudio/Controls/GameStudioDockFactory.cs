@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Templates;
 using Dock.Avalonia.Controls;
 using Dock.Model.Avalonia.Controls;
 using Dock.Model.Controls;
@@ -45,47 +44,46 @@ namespace Stride.GameStudio.Controls
                 DataContext = session
             };
 
+            // Create ToolDock - set Content via property assignment
             var solutionExplorer = new ToolDock
             {
                 Id = "SolutionExplorer",
                 Title = "Solution Explorer",
                 CanClose = false,
-                CanPin = true,
-                Content = solutionExplorerView
+                CanPin = true
             };
+            SetContent(solutionExplorer, solutionExplorerView);
 
             var assetViewDock = new ToolDock
             {
                 Id = "AssetView",
                 Title = "Asset View",
                 CanClose = false,
-                CanPin = true,
-                Content = assetView
+                CanPin = true
             };
+            SetContent(assetViewDock, assetView);
 
             var propertyGrid = new ToolDock
             {
                 Id = "PropertyGrid",
                 Title = "Property Grid",
                 CanClose = false,
-                CanPin = true,
-                Content = propertyGridView
+                CanPin = true
             };
+            SetContent(propertyGrid, propertyGridView);
 
             var documentDock = new DocumentDock
             {
                 Id = "Documents",
                 Title = "Documents",
                 CanClose = false,
-                CanPin = false,
-                Content = new TextBlock
-                {
-                    Text = "Documents (not yet implemented)",
-                    HorizontalAlignment = Avalonia.Media.VerticalAlignment.Center,
-                    VerticalAlignment = Avalonia.Media.VerticalAlignment.Center,
-                    Foreground = Avalonia.Media.Brushes.Gray
-                }
+                CanPin = false
             };
+            SetContent(documentDock, new TextBlock
+            {
+                Text = "Documents (not yet implemented)",
+                Foreground = Avalonia.Media.Brushes.Gray
+            });
 
             var leftPanel = new ProportionalDock
             {
@@ -125,6 +123,21 @@ namespace Stride.GameStudio.Controls
             };
 
             dockControl.Layout = rootDock;
+        }
+
+        private static void SetContent(ToolDock dock, Control content)
+        {
+            // ToolDock.Content property
+            var prop = typeof(ToolDock).GetProperty("Content");
+            if (prop != null)
+                prop.SetValue(dock, content);
+        }
+
+        private static void SetContent(DocumentDock dock, Control content)
+        {
+            var prop = typeof(DocumentDock).GetProperty("Content");
+            if (prop != null)
+                prop.SetValue(dock, content);
         }
     }
 }

@@ -18,15 +18,9 @@
       </Style>
     </TreeView.Styles>
     <TreeView.ItemTemplate>
-      <HierarchicalDataTemplate ItemsSource="{Binding Content}">
-        <StackPanel Orientation="Horizontal" Margin="2,1">
-          <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
-          <TextBlock Text="*" 
-                     Visibility="{Binding IsDirty, Converter={x:Static ObjectToBoolConverter.Instance}, FallbackValue={x:Static Visibility.Collapsed}}"
-                     Foreground="{DynamicResource StrideHighlightBrush}"
-                     VerticalAlignment="Center"/>
-        </StackPanel>
-      </HierarchicalDataTemplate>
+      <TreeDataTemplate ItemsSource="{Binding Content}">
+        <TextBlock Text="{Binding Name}" Margin="2,1"/>
+      </TreeDataTemplate>
     </TreeView.ItemTemplate>
   </TreeView>
 </UserControl>
