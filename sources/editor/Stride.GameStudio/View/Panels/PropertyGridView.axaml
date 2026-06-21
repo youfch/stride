@@ -1,0 +1,33 @@
+<!-- Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp) -->
+<!-- Distributed under the MIT license. See the LICENSE.md file in the project root for more information. -->
+
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:Stride.Core.Assets.Editor.ViewModel;assembly=Stride.Core.Assets.Editor"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Stride.GameStudio.View.Panels.PropertyGridView"
+             x:CompileBindings="False"
+             d:DataContext="{d:DesignInstance vm:SessionViewModel}">
+  <DockPanel>
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+      <ItemsControl ItemsSource="{Binding SelectedAssetProperties, FallbackValue={}}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <DockPanel Margin="4,2" LastChildFill="False">
+              <TextBlock DockPanel.Dock="Left" 
+                         Text="{Binding DisplayName, FallbackValue=Property}"
+                         Foreground="{DynamicResource StrideDisabledForegroundBrush}"
+                         Width="120"
+                         VerticalAlignment="Center"/>
+              <TextBox Text="{Binding Value, FallbackValue=''}"
+                       IsReadOnly="True"
+                       VerticalAlignment="Center"/>
+            </DockPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

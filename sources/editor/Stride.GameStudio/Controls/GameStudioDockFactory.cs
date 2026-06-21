@@ -5,11 +5,15 @@
 
 using System;
 using System.Collections.Generic;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Templates;
 using Dock.Avalonia.Controls;
 using Dock.Model.Avalonia.Controls;
 using Dock.Model.Controls;
 using Dock.Model.Core;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.GameStudio.View.Panels;
 
 namespace Stride.GameStudio.Controls
 {
@@ -22,22 +26,41 @@ namespace Stride.GameStudio.Controls
         /// Initializes the dock layout with Solution Explorer, Asset View, and Property Grid panels.
         /// </summary>
         /// <param name="dockControl">The DockControl to initialize.</param>
-        public static void InitializeLayout(DockControl dockControl)
+        /// <param name="session">The current session ViewModel for data binding.</param>
+        public static void InitializeLayout(DockControl dockControl, SessionViewModel session)
         {
+            // Create panel Views with DataContext bound to session
+            var solutionExplorerView = new SolutionExplorerView
+            {
+                DataContext = session
+            };
+
+            var assetView = new AssetView
+            {
+                DataContext = session
+            };
+
+            var propertyGridView = new PropertyGridView
+            {
+                DataContext = session
+            };
+
             var solutionExplorer = new ToolDock
             {
                 Id = "SolutionExplorer",
                 Title = "Solution Explorer",
                 CanClose = false,
                 CanPin = true,
+                Content = solutionExplorerView
             };
 
-            var assetView = new ToolDock
+            var assetViewDock = new ToolDock
             {
                 Id = "AssetView",
                 Title = "Asset View",
                 CanClose = false,
                 CanPin = true,
+                Content = assetView
             };
 
             var propertyGrid = new ToolDock
@@ -46,6 +69,7 @@ namespace Stride.GameStudio.Controls
                 Title = "Property Grid",
                 CanClose = false,
                 CanPin = true,
+                Content = propertyGridView
             };
 
             var documentDock = new DocumentDock
@@ -54,6 +78,13 @@ namespace Stride.GameStudio.Controls
                 Title = "Documents",
                 CanClose = false,
                 CanPin = false,
+                Content = new TextBlock
+                {
+                    Text = "Documents (not yet implemented)",
+                    HorizontalAlignment = Avalonia.Media.VerticalAlignment.Center,
+                    VerticalAlignment = Avalonia.Media.VerticalAlignment.Center,
+                    Foreground = Avalonia.Media.Brushes.Gray
+                }
             };
 
             var leftPanel = new ProportionalDock

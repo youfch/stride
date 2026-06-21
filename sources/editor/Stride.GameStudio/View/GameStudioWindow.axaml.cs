@@ -27,7 +27,6 @@ namespace Stride.GameStudio.View
         public GameStudioWindow()
         {
             InitializeComponent();
-            InitializeDocking();
         }
 
         public GameStudioWindow(EditorViewModel editor)
@@ -52,7 +51,8 @@ namespace Stride.GameStudio.View
 
         private void InitializeDocking()
         {
-            GameStudioDockFactory.InitializeLayout(MainDockControl);
+            // Pass the Session ViewModel to the dock factory for data binding
+            GameStudioDockFactory.InitializeLayout(MainDockControl, Editor.Session);
         }
     }
 }

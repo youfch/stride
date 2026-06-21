@@ -1,0 +1,53 @@
+<!-- Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp) -->
+<!-- Distributed under the MIT license. See the LICENSE.md file in the project root for more information. -->
+
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:Stride.Core.Assets.Editor.ViewModel;assembly=Stride.Core.Assets.Editor"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Stride.GameStudio.View.Panels.AssetView"
+             x:CompileBindings="False"
+             d:DataContext="{d:DesignInstance vm:SessionViewModel}">
+  <DockPanel>
+    <!-- Toolbar -->
+    <ToolBarTray DockPanel.Dock="Top">
+      <ToolBar>
+        <Button Content="New" ToolTip.Tip="Add new asset"
+                Command="{Binding Assets.RunAssetTemplateCommand, FallbackValue={x:Null}}"/>
+        <Button Content="Edit" ToolTip.Tip="Edit selected asset"
+                Command="{Binding Assets.Session.EditSelectedContentCommand, FallbackValue={x:Null}}"/>
+        <Separator/>
+        <Button Content="Delete" ToolTip.Tip="Delete selected asset"
+                Command="{Binding Assets.DeleteContentCommand, FallbackValue={x:Null}}"/>
+      </ToolBar>
+    </ToolBarTray>
+
+    <!-- Asset list -->
+    <Grid>
+      <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
+                  Visibility="{Binding Assets.FilteredContent.Count, Converter={x:Static ObjectToBoolConverter.Instance}, FallbackValue={x:Static Visibility.Collapsed}}">
+        <TextBlock Text="No assets to display"
+                   Foreground="{DynamicResource StrideDisabledForegroundBrush}"
+                   TextAlignment="Center"/>
+      </StackPanel>
+
+      <ListBox ItemsSource="{Binding Assets.FilteredContent}"
+               SelectedItem="{Binding Assets.SelectedContent, Mode=TwoWay}"
+               Visibility="{Binding Assets.FilteredContent.Count, Converter={x:Static ObjectToBoolConverter.Instance}, FallbackValue={x:Static Visibility.Collapsed}}">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <DockPanel Margin="4,2">
+              <TextBlock Text="{Binding Name}" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding TypeDisplayName}" 
+                         Foreground="{DynamicResource StrideDisabledForegroundBrush}"
+                         FontSize="10"
+                         VerticalAlignment="Center"/>
+            </DockPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </Grid>
+  </DockPanel>
+</UserControl>
