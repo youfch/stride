@@ -11,23 +11,57 @@
              x:CompileBindings="False"
              d:DataContext="{d:DesignInstance vm:SessionViewModel}">
   <DockPanel>
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-      <ItemsControl ItemsSource="{Binding SelectedAssetProperties, FallbackValue={}}">
+    <!-- Header bar showing selection info -->
+    <Border DockPanel.Dock="Top"
+            Background="{DynamicResource StrideDarkBackgroundBrush}"
+            Padding="8,4"
+            BorderBrush="{DynamicResource StrideBorderBrush}"
+            BorderThickness="0,0,0,1">
+      <StackPanel Orientation="Horizontal">
+        <TextBlock Text="{Binding AssetViewProperties.TypeDescription, FallbackValue='Properties'}"
+                   Foreground="{DynamicResource StrideForegroundBrush}"
+                   FontWeight="SemiBold"
+                   Margin="0,0,8,0"/>
+        <TextBlock Text="{Binding AssetViewProperties.Name, FallbackValue=''}"
+                   Foreground="{DynamicResource StrideDisabledForegroundBrush}"/>
+      </StackPanel>
+    </Border>
+
+    <!-- Property Grid - Simple list view -->
+    <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                  VerticalScrollBarVisibility="Auto">
+      <ItemsControl ItemsSource="{Binding AssetViewProperties.ViewModel.RootNode.Children, FallbackValue={}}">
         <ItemsControl.ItemTemplate>
           <DataTemplate>
             <DockPanel Margin="4,2" LastChildFill="False">
-              <TextBlock DockPanel.Dock="Left" 
-                         Text="{Binding DisplayName, FallbackValue=Property}"
-                         Foreground="{DynamicResource StrideDisabledForegroundBrush}"
-                         Width="120"
-                         VerticalAlignment="Center"/>
-              <TextBox Text="{Binding Value, FallbackValue=''}"
-                       IsReadOnly="True"
-                       VerticalAlignment="Center"/>
+              <!-- Property Name -->
+              <TextBlock DockPanel.Dock="Left"
+                         Text="{Binding DisplayName, FallbackValue='Property'}"
+                         Foreground="{DynamicResource StrideForegroundBrush}"
+                         Width="160"
+                         Margin="0,0,8,0"
+                         VerticalAlignment="Center"
+                         ToolTip.Tip="{Binding DisplayPath, FallbackValue=''}"/>
+              
+              <!-- Property Value -->
+              <TextBox Text="{Binding NodeValue, FallbackValue=''}"
+                       Width="250"
+                       Height="22"
+                       IsReadOnly="{Binding IsReadOnly, FallbackValue=True}"
+                       VerticalAlignment="Center"
+                       Margin="0,0,4,0"/>
             </DockPanel>
           </DataTemplate>
         </ItemsControl.ItemTemplate>
       </ItemsControl>
     </ScrollViewer>
+    
+    <!-- Empty selection message (shown when no properties) -->
+    <TextBlock Text="{Binding AssetViewProperties.FallbackMessage, FallbackValue='Select an object to display its properties'}"
+               Foreground="{DynamicResource StrideDisabledForegroundBrush}"
+               TextWrapping="Wrap"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               Margin="16"/>
   </DockPanel>
 </UserControl>
