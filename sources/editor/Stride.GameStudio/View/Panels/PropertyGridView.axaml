@@ -4,6 +4,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:Stride.Core.Assets.Editor.ViewModel;assembly=Stride.Core.Assets.Editor"
+             xmlns:local="clr-namespace:Stride.GameStudio.View.Panels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
@@ -27,30 +28,13 @@
       </StackPanel>
     </Border>
 
-    <!-- Property Grid - Simple list view -->
+    <!-- Property Grid - Tree view with expand/collapse -->
     <ScrollViewer HorizontalScrollBarVisibility="Auto"
                   VerticalScrollBarVisibility="Auto">
       <ItemsControl ItemsSource="{Binding AssetViewProperties.ViewModel.RootNode.Children, FallbackValue={}}">
         <ItemsControl.ItemTemplate>
           <DataTemplate>
-            <DockPanel Margin="4,2" LastChildFill="False">
-              <!-- Property Name -->
-              <TextBlock DockPanel.Dock="Left"
-                         Text="{Binding DisplayName, FallbackValue='Property'}"
-                         Foreground="{DynamicResource StrideForegroundBrush}"
-                         Width="160"
-                         Margin="0,0,8,0"
-                         VerticalAlignment="Center"
-                         ToolTip.Tip="{Binding DisplayPath, FallbackValue=''}"/>
-              
-              <!-- Property Value -->
-              <TextBox Text="{Binding NodeValue, FallbackValue=''}"
-                       Width="250"
-                       Height="22"
-                       IsReadOnly="{Binding IsReadOnly, FallbackValue=True}"
-                       VerticalAlignment="Center"
-                       Margin="0,0,4,0"/>
-            </DockPanel>
+            <local:PropertyRowControl DataContext="{Binding}" />
           </DataTemplate>
         </ItemsControl.ItemTemplate>
       </ItemsControl>
